@@ -1,0 +1,114 @@
+﻿@layout LoginLayout
+@page "/login"
+@using EnterpriseApp.Shared.Models;
+
+
+@inject NavigationManager NavigationManager
+@inject HttpClient http
+@inject ILoginService LoginService
+@inject AppState appState
+
+<div class="login-box">
+
+    <div class="card">
+        <div class="card-body login-card-body" style="border-radius: 15px; ">
+            <p class="login-box-msg mb-0"> <img src="/img/abonap_vertical.png" /></p>
+            <p class="login-box-msg mb-0">Iniciar sesión en el sistema</p>
+
+            <EditForm Model="@user" OnValidSubmit="FrmSubmit">
+                <DataAnnotationsValidator />
+
+                <div class="input-group mb-3">
+                    <input @bind-value="@user.UserName" class="form-control" placeholder="Usuario">
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-envelope"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="input-group mb-3">
+                    <input type="password" @bind-value="@user.Password" class="form-control" placeholder="Password">
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-lock"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <span style="font-size:12px" class="text-danger"><ValidationSummary /> @Message </span>
+                        <div style="font-size:12px" asp-validation-summary="All" class="text-danger"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12" style="text-align:right">
+                        @if (loading)
+                        {<button class="btn btn-outline-primary" type="button" disabled> <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Accediendo ... </button> }
+                        else
+                        { <button type="submit" class="frmgo btn btn-primary">Iniciar sesión</button>}
+                    </div>
+                </div>
+            </EditForm>
+
+        @*    <p class="mb-1">
+                <a class="go" style="font-size: 12px" href="./forgot">¿Olvidaste tu contraseña?</a>
+            </p>*@
+
+            <p class="mb-0">
+                <a class="go" style="font-size: 12px" href="./">INICIO</a>
+                <p style="color: #80808096;" >@EnterpriseApp.Shared.AppConfiguracion.GetVersion</p>
+            </p>
+
+        </div>
+    </div>
+
+</div>
+
+@code {
+    bool loading = false;
+
+    protected override Task OnInitializedAsync()
+    {
+        LoginService.Logout();
+        return base.OnInitializedAsync();
+    }
+
+    private string Message = "";
+
+    private LoginRequest user = new LoginRequest { App = "8a60474e-18bd-4b09-9c21-bde10c526cf2" };
+
+    private async void FrmSubmit()
+    {
+        loading = true;
+        Message = "";
+
+        try
+        {
+            var response = await http.PostAsJsonAsync("api/User/login", user);
+            string data = await response.Content.ReadAsStringAsync();
+            ApiResponse<EnterpriseApp.Shared.Models.UserTocken> res = 
+            JsonSerializer.Deserialize<ApiResponse<EnterpriseApp.Shared.Models.UserTocken>>(data, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+            ?? new ApiResponse<UserTocken>();
+            
+            if (res.IsSuccess)
+            {
+                await LoginService.Login(res.Data?.Token ?? "" );
+                appState.SetLogin(true, res.Message);
+                NavigationManager.NavigateTo("/home");
+            }
+            else
+            {
+                Message = res.Message;
+            }
+        }
+        catch (Exception ex) { Message = ex.Message; }
+
+        loading = false;
+
+        StateHasChanged();
+    } 
+}

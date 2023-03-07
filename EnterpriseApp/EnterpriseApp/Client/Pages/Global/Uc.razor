@@ -1,0 +1,55 @@
+﻿@page "/uc"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<section class="content">
+    <br />
+    <h3 style="margin-left:1em;">Acceso denegado</h3>
+    <p style="margin:1em 2em" class="label-default">
+        Solicite acceso a esta opcion con su adminitrador del sistema
+    </p>
+    
+    <div class="box">
+        <img src="/img/ad.jpg" width="350" height="250" alt="page under construction">
+    </div>
+
+    <br /><br />
+</section>
+
+@*<p>@_authMessage</p>
+
+@if (_claims.Count() > 0)
+{
+    <ul>
+        @foreach (var claim in _claims)
+        {
+            <li>@claim.Type: @claim.Value</li>
+        }
+    </ul>
+}*@
+
+@code {/*
+    private string _authMessage;
+    private string _surnameMessage;
+    private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            _authMessage = $"{user.Identity.Name} is authenticated.";
+            _claims = user.Claims;
+            _surnameMessage = 
+                $"Surname: {user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value}";
+        }
+        else
+        {
+            _authMessage = "The user is NOT authenticated.";
+        }
+    }*/
+}

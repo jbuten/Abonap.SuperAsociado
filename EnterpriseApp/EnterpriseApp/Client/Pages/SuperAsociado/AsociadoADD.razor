@@ -1,0 +1,173 @@
+﻿@page "/asociadoadd"
+
+@inject HttpClient http
+@inject NavigationManager navigation
+@inject IJSRuntime jsRuntime
+
+<RedirectToLogin />
+
+<section class="content">
+
+    <br />
+    <h3 style="margin-left:1em"> <i class="fas fa-user-plus"></i> ASOCIADO</h3>
+    <p style="margin:1em 2em" class="label-default">
+        Registro de Asociado (Usuario Empresarial)
+    </p> <div style="margin:1em 2em" class="text-danger">@((MarkupString)Message)</div>
+    <br />
+
+
+    <EditForm Model="@Reg" OnSubmit="@HandleSubmit">
+
+    <div class="row">
+
+        <div class="col-md-12" style="margin: 0 auto; max-width:900px">
+            <div class="card card-info card-outline  ">
+
+                    <div class="card-body">
+                    <div class="form-group row">
+                        <label for="inputEmail3" class="col-sm-2 col-form-label">RNC</label>
+                        <div class="col-sm-10">
+
+                                
+                                    <div class="input-group input-group-sm" style="width: 300px; display:inline-flex">
+                                        <input id="inputSearch"
+                                           type="search" class="form-control float-right" placeholder="buscar" value="@Reg.Rnc" />
+                                        <div class="input-group-append">
+                                        <button type="button" class="btn btn-default" @onclick="CheckChanged">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                
+                        </div>
+                    </div>
+                    <hr /> <br />
+                    <div class="row">
+                        <div class="col-md-7">
+                              <div class="form-group row">
+                        <label  class="col-sm-3 col-form-label">Nombre Empresa</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" value="@Reg.Nombre" readonly >
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                            <label  class="col-sm-3 col-form-label">Tipo Rubro</label>
+                            <div class="col-sm-9">
+                                        <input type="text" class="form-control" value="@Reg.RazonSocial" readonly>
+                            </div>
+                        </div>
+
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="form-group row">
+                                <label class="col-sm-5 col-form-label" style="text-align:right">Fecha Registro</label>
+                                <div class="col-sm-7">
+                                        <input type="text" class="form-control" value="@Reg.Fecha" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-5 col-form-label" style="text-align:right">Estatus DGII</label>
+                                <div class="col-sm-7">
+                                        <input type="text" class="form-control" value="@Reg.EstatusDGII" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr /> 
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Email Usuario</label>
+                                <div class="col-sm-9">
+                                    <input type="email" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Nombre Usuario</label>
+                                <div class="col-sm-9">
+                                        <input type="text" class="form-control" required>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="form-group row">
+                                <label class="col-sm-5 col-form-label" style="text-align:right">Telefono</label>
+                                <div class="col-sm-7">
+                                        <input type="text" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-5 col-form-label" style="text-align:right">Puesto</label>
+                                <div class="col-sm-7">
+                                        <input type="text" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                            <div class="offset-sm-2 col-sm-10">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="exampleCheck2">
+                                    <label class="form-check-label" for="exampleCheck2">Enviar notificacion</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer">
+
+                        @if (loading)
+                                {
+                            <button class="btn btn-outline-danger float-right" type="button" disabled>
+                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                        Cargando ...
+                                    </button>
+                                }
+                                else
+                                {<button type="submit" class="btn btn-info float-right">REGISTRAR ASOCIADO</button>}
+                    </div>
+        </div>
+
+    </div>
+    </div>
+
+    </EditForm>
+
+
+    <br /><br />
+</section>
+
+@code {
+
+    bool loading = false;
+    string Message = "";
+
+    Model.Asociado Reg = new Model.Asociado { Rnc = "" };
+
+    private async void CheckChanged()
+    {
+        loading = true;
+        await Task.Delay(450);
+        Reg.Rnc = "101796822";
+        Reg.Nombre = "GRUPO RAMOS SA";
+        Reg.RazonSocial = "VENTA AL POR MENOR EN HIPERMER";
+        Reg.Fecha = "14/01/1999";
+        Reg.EstatusDGII = "ACTIVO";
+        loading = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void HandleSubmit()
+    {
+        loading = true;
+        await Task.Delay(450);
+        navigation.NavigateTo("asociado");
+    }
+
+}

@@ -1,0 +1,301 @@
+﻿@page "/checklist"
+
+@inject IJSRuntime jsRuntime
+@inject HttpClient http
+@inject AppState appState
+
+
+<style>
+    input.larger {
+        transform: scale(1.5);
+        margin: 5px; 
+    }
+</style>
+
+<section class="content pr-4 pl-4">
+
+
+    <br />
+    <h3 style="margin-left:1em">CheckList</h3>
+    <p style="margin:1em 2em" class="label-default">
+        Lista de documentos por tipo de crédito - Super Asociado
+    </p> <div style="margin:1em 2em" class="text-danger">@((MarkupString)Message)</div>
+    <br />
+
+    <div class="row">
+        <div class="col-md-12" style="max-width:900px; margin:0em auto 1em auto">
+
+
+            <div class="card card-info card-outline">
+                <div class="card-header">
+                    @if (loading)
+                    {
+                        <div class="spinner-border text-info" style="font-size:small" role="status"><span class="sr-only">Loading...</span></div>
+                    }
+                    <table style="width:100%">
+                        <tr>
+                            <td style="width:100px">
+                                <label>Producto</label>
+                            </td>
+                            <td>
+                                <select style="width:200px" class="form-control">
+                                    <option>
+                                        Préstamo personal
+                                    </option>
+                                    <option>
+                                        Préstamo hipotecario
+                                    </option>
+                                </select>
+                            </td>
+                            <td style="text-align:right">
+                            
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="card'-body table-responsive p-0">
+                    
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Documento</th>
+                                <th style="width: 40px">Requerido</th>
+                                <th style="width: 40px">Cargar</th>
+                                <th style="width: 40px">Descargar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1.</td>
+                                <td>Copia de la cédula y/o de pasaporte del cliente</td>
+                                <td align="center"><input type="checkbox" class="larger" name="checkBox2" checked> </td>
+                                <td align="center"> <button type="button" class="btn btn-outline-secondary btn-xs"> <i class="fa fa-upload"> </i>  </button> </td>
+                                <td align="center"> <button type="button" class="btn  btn-outline-secondary btn-xs"> <i class="fa fa-download"> </i> </button> </td>
+                            </tr>
+                            <tr>
+                                <td>2.</td>
+                                <td>Carta de autorización de descuento</td>
+                                <td align="center"><input type="checkbox" class="larger" name="checkBox2" checked></td>
+                                <td align="center"> <button type="button" class="btn btn-outline-secondary btn-xs"> <i class="fa fa-upload"> </i>  </button> </td>
+                                <td align="center"> <button type="button" class="btn  btn-outline-secondary btn-xs"> <i class="fa fa-download"> </i> </button> </td>
+                            </tr>
+                            <tr>
+                                <td>3.</td>
+                                <td>Certificación laboral </td>
+                                <td align="center"><input type="checkbox" class="larger" name="checkBox2" > </td>
+                                <td align="center"> <button type="button" class="btn btn-outline-secondary btn-xs"> <i class="fa fa-upload"> </i>  </button> </td>
+                                <td align="center"> <button type="button" class="btn  btn-outline-secondary btn-xs"> <i class="fa fa-download"> </i> </button> </td>
+                            </tr>
+                            <tr>
+                                <td>4.</td>
+                                <td>Solicitud de préstamo  </td>
+                                <td align="center"><input type="checkbox" class="larger" name="checkBox2" checked></td>
+                                <td align="center"> <button type="button" class="btn btn-outline-secondary btn-xs"> <i class="fa fa-upload"> </i>  </button> </td>
+                                <td align="center"> <button type="button" class="btn  btn-outline-secondary btn-xs"> <i class="fa fa-download"> </i> </button> </td>
+                            </tr>
+                            <tr>
+                                <td>5.</td>
+                                <td>Seguro de vida. (Se anexará cuando las prestaciones laborales del cliente no cubran el monto que está solicitando el mismo).   </td>
+                                <td align="center"><input type="checkbox" class="larger" name="checkBox2" ></td>
+                                <td align="center"> <button type="button" class="btn btn-outline-secondary btn-xs"> <i class="fa fa-upload"> </i>  </button> </td>
+                                <td align="center"> <button type="button" class="btn  btn-outline-secondary btn-xs"> <i class="fa fa-download"> </i> </button> </td>
+                            </tr>
+                            <tr>
+                                <td>6.</td>
+                                <td>Pre-contratación de seguro. (Se anexará cuando las prestaciones laborales del cliente no cubran el monto que está solicitando el mismo)</td>
+                                <td align="center"><input type="checkbox" class="larger" name="checkBox2" ></td>
+                                <td align="center"> <button type="button" class="btn btn-outline-secondary btn-xs"> <i class="fa fa-upload"> </i>  </button> </td>
+                                <td align="center"> <button type="button" class="btn  btn-outline-secondary btn-xs"> <i class="fa fa-download"> </i> </button> </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<div class="modal fade @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div id="dv-overlay">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Empresa</h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <EditForm Model="record" OnValidSubmit="FrmSubmit">
+                    <DataAnnotationsValidator />
+
+                    <input asp-for="Input.Id" type="hidden" />
+                    <div class="modal-body">
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="input-group mb-3" style="border:1px solid #ccc; border-radius: 5px;">
+                            <div class="input-group-prepend" style="border:0; margin-right:5px">
+                                <span class="input-group-text">
+                                    <InputFile id="infile" OnChange="@OnFileSelection" />
+                                    <div id="dvAppLogo" class="text-center">
+                                        <img style="min-width:30px; min-height:30px" @onclick="getImage" src="@imageSource" alt="Logo" class="img-circle img-size-32 mr-2">
+                                    </div>
+                                </span>
+                            </div>
+                            <InputText @bind-Value=record.Codigo class="form-control" placeholder="Codigo empresa" style="border:0" />
+
+                        </div>
+
+                        <div class="form-group">
+                            <InputText @bind-Value=record.Nombre class="form-control" placeholder="Nombre empresa" />
+                        </div>
+                        <div class="form-group">
+                            <InputText @bind-Value=record.RNC class="form-control" placeholder="RNC" />
+                        </div>
+                        <div class="form-group">
+                            <InputText @bind-Value=record.Direccion class="form-control" placeholder="Direccion" />
+                        </div>
+                        <div class="form-group">
+                            <InputText @bind-Value=record.Telefonos class="form-control" placeholder="Telefonos" />
+                        </div>
+                        <div class="fg1 form-group">
+                            <div class="custom-control custom-checkbox">
+                                <InputCheckbox @bind-Value="record.Inactive" id="regInactive"
+                                               class="custom-control-input custom-control-input-danger" />
+                                <label for="regInactive" class="custom-control-label"> INACTIVO </label>
+                                <span style="font-size:xx-small; margin-left:2em">@record.Id</span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <span style="font-size:12px" class="text-danger"><ValidationSummary /> @Message </span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+
+                        <span class="d-flex flex-grow-1" style="float:left;font-size:xx-small">
+                            @record.CreatedDate.ToString("dd-MM-yyyy hh:mm tt") *
+                            @record.CreatedBy
+                        </span>
+                        <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cerrar</button>
+                        <button id="btnSave" type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+
+    IJSObjectReference module;
+
+    bool loading = true;
+    private string Message = "", ModalDisplay = "", ModalClass = "";
+
+    private string imageSource = @"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWBAMAAADOL2zRAAAAG1BMVEVsdX3////Hy86jqK1+ho2Ql521ur7a3N7s7e5YhiPTAAAA80lEQVR4Xu3SoU/DQBiG8afXWzt5XQsaEOieQ64CXwJiskuWZXILSXXDSODPhn4Gy1W/P/mIN5fLh4iIiIiIiIiIiIiQUVTVwOn6l4Kl4rsl0T1uPPb57X6LARcsxWNDmlhRtlAObqBofA15FSyNPJLmOVK+QbbNJ/hwZ/CvwVLDE4k6ssuGbruaIMYe8GFOvmG3YOuwGzp8gHKDbc3pEOjStyCf7F0UNbY1p89F74JVsP9i/YVtWVr0X5HiXA7uDk4vrW1ZGnlI31q/79vf++rxtZtsy1I83qRvrS5X7O7d5GvbsvSPuxcRERERERERERH5AVmlJVGG0qyRAAAAAElFTkSuQmCC";
+    private List<Empresa> _empresa = new List<Empresa>();
+    private Empresa record = new Empresa();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/profile.js?1");
+
+            _empresa = await http.GetFromJsonAsync<List<Empresa>>($"/api/empresa", new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<Empresa>();
+        }
+        catch (Exception ex)
+        {
+            Message = ex.Message;
+        }
+
+        loading = false;
+    }
+
+    public async Task OpenModal(Empresa reg)
+    {
+        imageSource = reg.Logo;
+        record = reg;
+        ModalDisplay = "block;";
+        await Task.Delay(100);
+        ModalClass = "show";
+    }
+
+    public async Task CloseModal()
+    {
+        ModalClass = "";
+        await Task.Delay(250);
+        ModalDisplay = "none;";
+    }
+
+    private async void FrmSubmit()
+    {
+        await CloseModal();
+
+        try
+        {
+            record.Logo = imageSource;
+            if (record.CreatedBy == "") { record.CreatedBy = appState.UserName; }
+
+            var postResult = await http.PostAsJsonAsync("/api/Empresa", record);
+            var postContent = (await postResult.Content.ReadAsStringAsync());
+
+            if (postResult.IsSuccessStatusCode)
+            {
+                _empresa = JsonSerializer.Deserialize<List<Empresa>>(postContent,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<Empresa>();
+
+                await module.InvokeAsync<bool>("showMsg", "success", "Guardado!");
+            }
+            else
+            {
+                await module.InvokeAsync<bool>("showMsg", "error", postContent);
+            }
+        }
+        catch (Exception ex)
+        {
+            Message = "E:" + ex.Message;
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+
+
+    private async Task OnFileSelection(InputFileChangeEventArgs e)
+    {
+        Message = "";
+
+        if (!EnterpriseApp.Shared.Tools.IsImage(e.File.Name))
+        {
+            Message = "Seleccione una imagen valida.  ";
+
+            await module.InvokeAsync<bool>("showMsg", "error", "Seleccione una imagen valida.  ");
+
+            return;
+        }
+
+        string imageType = e.File.ContentType;
+        var resizedImage = await e.File.RequestImageFileAsync(imageType, 150, 150);
+        var buffers = new byte[resizedImage.Size];
+        await resizedImage.OpenReadStream().ReadAsync(buffers);
+
+        imageSource = string.Format("data:image/png;base64,{0}", Convert.ToBase64String(buffers));
+
+    }
+
+    public async Task getImage()
+    {
+        if (loading) { return; }
+        await module.InvokeAsync<bool>("getImage");
+    }
+
+}

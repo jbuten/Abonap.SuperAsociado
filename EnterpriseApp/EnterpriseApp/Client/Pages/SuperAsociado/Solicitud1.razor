@@ -1,0 +1,493 @@
+﻿@page "/solicitud1"
+
+@inject NavigationManager Navigation
+@inject IJSRuntime jsRuntime
+@inject HttpClient http
+@inject AppState appState
+
+@inject NavigationManager navigation
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1> <i class="fa fa-paper-plane" /> SOLICITUD </h1>
+                @Message
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/expediente"> <i class="fa fa-reply" /> Back</a></li>
+                    <li class="breadcrumb-item active">Super Asociado</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card card-primary card-outline">
+                    <div class="card-body box-profile">
+                        <div class="text-center">
+                            @if (loading)
+                            {
+                                    <img class="profile-user-img img-fluid img-circle"
+                                 src="./img/cedula-jce.jpg"
+                                 alt="User profile picture">
+                            }
+                            else
+                            {
+                                    <img class="profile-user-img img-fluid img-circle"
+                                 src="./img/cedula-jce.jpg"
+                                 alt="User profile picture">
+                            }
+                        </div>
+
+                        <h3 class="profile-username text-center">@Reg.Rnc</h3>
+
+                        <p class="text-muted text-center">@Reg.Nombre</p>
+                        <p class="text-muted text-center">@Reg.RazonSocial</p>
+
+                        <ul class="list-group list-group-unbordered mb-3">
+                            
+                            <li class="list-group-item">
+                                <strong><i class="fas fa-suitcase mr-1"></i> Puesto</strong>
+                                <p class="text-muted" style="margin:0 0 0 2em">VENTAS DIRECTAS</p>
+                            </li>
+                            <li class="list-group-item">
+                                <strong><i class="fas fa-envelope mr-1"></i> Email</strong>
+                                <p class="text-muted" style="margin:0 0 0 2em">@Reg.Email</p>
+                            </li>
+                            <li class="list-group-item">
+                                <strong><i class="fas fa-phone mr-1"></i> Telefonos</strong>
+                                <p class="text-muted" style="margin:0 0 0 2em">@Reg.Telefono</p>
+                            </li>
+                            <li class="list-group-item" style="margin-bottom:0; padding-bottom:0; border-bottom:0">
+                                <strong><i class="fas fa-user mr-1"></i> Supervisor</strong>
+                                <p class="text-muted" style="margin:0 0 0 2em">Rafael Vidal Garcia</p>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-9">
+
+                <div class="card card-info card-outline  ">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-tablet"></i> SOLICITUD DE Préstamo</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+
+
+                        <div class="row">
+                            <div class="col-md-7">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">Tipo Acuerdo</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" value="Cuotas en Pago de Nomina"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label">Tipo Producto</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" value="Préstamos personal" />
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" style="text-align:right">Fecha Solicitud</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" value="24/01/2023" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" style="text-align:right">Disponible</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" value="357,000" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <div class="row">
+
+                            <div class="col-md-7">
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label">Estatus Solicitud</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" value="EN SOLICITUD DE CREDITO" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" style="text-align:right">Monto Solicitado</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" value="350,000" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-warning float-right">CANCELAR SOLICITUD</button>
+                    </div>
+                </div>
+
+                <div class="card card-info card-outline  ">
+                    <div class="card-header">
+                        <h3 class="card-title">* Documentos adjuntos al credito</h3>
+
+                                                <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body p-0">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10px">#</th>
+                                    <th>Documento</th>
+                                    <th style="width: 40px">Requerido</th>
+                                    <th style="width: 40px">Estatus</th>
+                                    <th style="width: 40px">Cargar</th>
+                                    <th style="width: 40px">Descargar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1.</td>
+                                    <td>Copia de la cédula y/o de pasaporte del cliente</td>
+                                    <td align="center"><span>SI</span></td>
+                                    <td align="center"><span class="text-success">Aceptado</span></td>
+                                    <td align="center"> <button type="button" class="btn btn-outline-secondary btn-xs" @onclick="OpenModal"> <i class="fa fa-upload"> </i>  </button> </td>
+                                    <td align="center"><a class="btn btn-outline-secondary btn-xs" href="documento.docx" download="documento.docx" role="button" target="=_top"> <i class="fa fa-download"> </i></a></td>
+                                </tr>
+                                <tr>
+                                    <td>2.</td>
+                                    <td>Carta de autorización de descuento</td>
+                                    <td align="center"><span>SI</span></td>
+                                    <td align="center"><span class="text-success">Aceptado</span></td>
+                                    <td align="center"> <button type="button" class="btn btn-outline-secondary btn-xs" @onclick="OpenModal"> <i class="fa fa-upload"> </i>  </button> </td>
+                                    <td align="center"><a class="btn btn-outline-secondary btn-xs" href="documento.docx" download="documento.docx" role="button" target="=_top"> <i class="fa fa-download"> </i></a></td>
+                                </tr>
+                                <tr>
+                                    <td>3.</td>
+                                    <td>Certificación laboral </td>
+                                    <td align="center"><span>NO</span></td>
+                                    <td align="center"><span class="text-success">Aceptado</span></td>
+                                    <td align="center"> <button type="button" class="btn btn-outline-secondary btn-xs" @onclick="OpenModal"> <i class="fa fa-upload"> </i>  </button> </td>
+                                    <td align="center"><a class="btn btn-outline-secondary btn-xs" href="documento.docx" download="documento.docx" role="button" target="=_top"> <i class="fa fa-download"> </i></a></td>
+                                </tr>
+                                <tr>
+                                    <td>4.</td>
+                                    <td>Solicitud de préstamo  </td>
+                                    <td align="center"><span>SI</span></td>
+                                    <td align="center"><span class="text-danger">Denegado</span></td>
+                                    <td align="center"> <button type="button" class="btn btn-outline-secondary btn-xs" @onclick="OpenModal"> <i class="fa fa-upload"> </i>  </button> </td>
+                                    <td align="center"><a class="btn btn-outline-secondary btn-xs" href="documento.docx" download="documento.docx" role="button" target="=_top"> <i class="fa fa-download"> </i></a></td>
+                                </tr>
+                                <tr>
+                                    <td>5.</td>
+                                    <td>Seguro de vida. (Se anexará cuando las prestaciones laborales del cliente no cubran el monto que está solicitando el mismo).   </td>
+                                    <td align="center"><span>NO</span></td>
+                                    <td align="center"><span >Pendiente</span></td>
+                                    <td align="center"> <button type="button" class="btn btn-outline-secondary btn-xs" @onclick="OpenModal"> <i class="fa fa-upload"> </i>  </button> </td>
+                                    <td align="center"><a class="btn btn-outline-secondary btn-xs" href="documento.docx" download="documento.docx" role="button" target="=_top"> <i class="fa fa-download"> </i></a></td>
+                                </tr>
+                                <tr>
+                                    <td>6.</td>
+                                    <td>Pre-contratación de seguro. (Se anexará cuando las prestaciones laborales del cliente no cubran el monto que está solicitando el mismo)</td>
+                                    <td align="center"><span>NO</span></td>
+                                    <td align="center"><span >Pendiente</span></td>
+                                    <td align="center"> <button type="button" class="btn btn-outline-secondary btn-xs" @onclick="OpenModal"> <i class="fa fa-upload"> </i>  </button> </td>
+                                    <td align="center"><a class="btn btn-outline-secondary btn-xs" href="documento.docx" download="documento.docx" role="button" target="=_top"> <i class="fa fa-download"> </i></a></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                
+                <div class="card card-info card-outline  ">
+                    <div class="card-header">
+                        <h3 class="card-title">Tabla de amortizacion</h3>
+                        
+                         <div class="card-tools">
+                            <a class="btn btn-outline-secondary btn-xs" href="./img/amortizacion.jpg" download="amortizacion.jpg" role="button"
+                               target="=_top"> <i class="fa fa-download"> </i> Descargar</a>
+
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body p-0">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10px">#</th>
+                                    <th>Fecha</th>
+                                    <th align="right">Cuota</th>
+                                    <th align="right">Intereses</th>
+                                    <th align="right">Capital</th>
+                                    <th align="right">Saldo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>1.</th>
+                                    <th>03/25/2023</th>
+                                    <td align="right"> 263,797.48 </td>
+                                    <td align="right"> 100,000.00 </td>
+                                    <td align="right"> 163,797.48 </td>
+                                    <td align="right"> 836,202.52 </td>
+                                </tr>
+                                <tr>
+                                    <th>2.</th>
+                                    <th>04/25/2023</th>
+                                    <td align="right"> 263,797.48 </td>
+                                    <td align="right"> 83,620.25 </td>
+                                    <td align="right"> 180,177.23 </td>
+                                    <td align="right"> 656,025.29 </td>
+                                </tr>
+                                <tr>
+                                    <th>3.</th>
+                                    <th>05/25/2023</th>
+                                    <td align="right"> 263,797.48 </td>
+                                    <td align="right">  65,602.53 </td>
+                                    <td align="right"> 198,194.95 </td>
+                                    <td align="right"> 457,830.34 </td>
+                                </tr>
+                                <tr>
+                                    <th>4.</th>
+                                    <th>06/25/2023</th>
+                                    <td align="right"> 263,797.48 </td>
+                                    <td align="right">  45,783.03 </td>
+                                    <td align="right"> 218,815.89 </td>
+                                    <td align="right"> 239.815.90 </td>
+                                </tr>
+                                <tr>
+                                    <th>5.</th>
+                                    <th>07/25/2023</th>
+                                    <td align="right"> 263,797.48 </td>
+                                    <td align="right">  23,981.59 </td>
+                                    <td align="right"> 239.815.89 </td>
+                                    <td align="right"> 0.00 </td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                
+
+
+
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+                <div class="modal fade @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+                    <div id="dv-overlay">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalTitle"> CheckList documentos</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+
+                                
+                                    <div class="modal-body">
+
+
+                                        <div id="actions" class="row">
+
+                                            <div class="btn-group w-100" style="margin:3em 1em">
+
+                                                <button type="submit" class="btn btn-outline-success col start">
+                                                    <i class="fas fa-upload"></i>
+                                                    <span>Seleccione documento a cargar</span>
+                                                </button>
+
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button id="btnSave" type="submit" class="btn btn-primary">Cargar</button>
+                                        <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cerrar</button>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+@code {
+
+    public async Task OpenModal()
+    {
+        ModalDisplay = "block;";
+        await Task.Delay(100);
+        ModalClass = "show";
+        StateHasChanged();
+    }
+
+    private async void CheckChanged()
+    {
+        loading = true;
+        await Task.Delay(450);
+        Reg.Rnc = "101796822";
+        Reg.Nombre = "GRUPO RAMOS SA";
+        Reg.RazonSocial = "VENTA AL POR MENOR EN HIPERMER";
+        Reg.Fecha = "14/01/1999";
+        Reg.EstatusDGII = "ACTIVO";
+        loading = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void HandleSubmit()
+    {
+        loading = true;
+        await Task.Delay(450);
+        navigation.NavigateTo("asociado");
+    }
+
+}
+
+
+@code {
+
+    Model.Asociado Reg = new Model.Asociado { Rnc = "" };
+
+
+    string usr = string.Empty;
+
+    bool loading = true;
+    private Abonap.Users.User user = new Abonap.Users.User();
+    string Message = ""; IJSObjectReference module;
+    private List<ListApp> apps = new List<ListApp>();
+    private List<DataItem> roles = new List<DataItem>();
+    int action = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Reg.Rnc = "001-1122345-6";
+        Reg.Nombre = "MARIA DEL CARMEN";
+        Reg.RazonSocial = "PEREZ MARTINEZ";
+        Reg.Fecha = "14/01/1999";
+        Reg.EstatusDGII = "ACTIVO";
+
+        Reg.NombreUsuario = "Argelia Monegro Castro";
+        Reg.Puesto = " Gerente Senior de Productos";
+        Reg.Telefono = "829-470-2865";
+        Reg.Email = "amonegro@abonap.com.do";
+
+        loading = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private string ModalDisplay = "", ModalClass = "";
+
+    public async Task CloseModal()
+    {
+        ModalClass = "";
+        await Task.Delay(250);
+        ModalDisplay = "none;";
+    }
+
+
+    FileData fileData = new FileData();
+
+    private async Task OnFileSelection(InputFileChangeEventArgs e)
+    {
+        Message = "";
+
+        //visible = "block";
+
+        if (!EnterpriseApp.Shared.Tools.IsImage(e.File.Name))
+        {
+            Message = "Seleccione una imagen valida.  "; //visible = "none";
+
+            await module.InvokeAsync<bool>("showMsg", "error", "Seleccione una imagen valida.  ");
+
+            return;
+
+        }
+
+        string imageType = e.File.ContentType;
+        var resizedImage = await e.File.RequestImageFileAsync(imageType, 466, 248);
+        var buffers = new byte[resizedImage.Size];
+        await resizedImage.OpenReadStream().ReadAsync(buffers);
+
+        var res = await http.PostAsJsonAsync($"/api/User/Firma/{appState.UserName}/{user.Username}",
+        Convert.ToBase64String(buffers));
+
+        var postContent = (await res.Content.ReadAsStringAsync()).Replace("\"", "");
+
+        if (!res.IsSuccessStatusCode)
+        {
+            Message = postContent;
+            await module.InvokeAsync<bool>("showMsg", "error", "Error cargando la firma");
+        }
+        else
+        {
+            Message = "";
+            user.Signature = postContent;
+            await module.InvokeAsync<bool>("showMsg", "success", "Firma guardada.");
+        }
+
+        //visible = "none";
+        StateHasChanged();
+    }
+
+    private Cfirma Fmodal { get; set; } = new Cfirma();
+
+    private async Task Mfirma()
+    {
+        await Fmodal.Open();
+    }
+
+    public async Task getImage()
+    {
+        if (loading) { return; }
+        await module.InvokeAsync<bool>("getImage");
+    }
+
+}

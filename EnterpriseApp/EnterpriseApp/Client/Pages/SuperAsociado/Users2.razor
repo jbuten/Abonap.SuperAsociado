@@ -1,0 +1,251 @@
+﻿@page "/users2"
+
+@inject HttpClient http
+@inject NavigationManager navigation
+@inject IJSRuntime jsRuntime
+
+
+<section class="content">
+
+            <br />
+            <h3 style="margin-left:1em"> <i class="fas fa-users"></i> Usuarios</h3>
+            <p style="margin:1em 2em" class="label-default">
+                Administracion de usuarios.
+            </p> <div style="margin:1em 2em" class="text-danger">@((MarkupString)Message)</div>
+            <br />
+
+    <div class="row">
+
+        <div class="col-md-12" style="margin: 0 auto; max-width:1200px">
+            <div class="card card-info card-outline  ">
+                <div class="card-header border-transparent">
+                   
+                     
+                    <div class="input-group input-group-sm" style="width: 200px; display:inline-flex">
+                       <div class="input-group-append">
+                            @if (loading)
+                            {
+                                <button type="button" class="btn btn-da">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            </button>  
+                            } else
+                            {
+                               <button type="button" class="btn btn-da">
+                                <i class="fas fa-filter"></i>
+                            </button> 
+                            }
+                           
+                        </div>
+                        <input id="inputSearch" 
+                       @bind-value="SearchText"
+           @bind-value:event="oninput" 
+            @onchange="SelectedCarsChanged"
+                        type="search" class="form-control float-right" placeholder="buscar" />
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-default">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                     <div class="card-tools">
+                         
+                  <ul class="nav nav-pills ml-auto">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link" href="#sales-chart" data-toggle="tab"> @usuarios.Count().ToString("N0")</a>
+                    </li>
+                    <li><button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button></li>
+                  </ul>
+                </div>
+
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table id="tbdata" class="table m-0 table-striped table-valign-middle">
+                            <thead>
+                                <tr>
+                                    <th colspan="2" style="max-width:120px">Usuario</th>
+                                    <th>Nombre Usuario</th>
+                                    <th style="max-width:80px">Empleado</th>
+                                    <th>Departamento</th>
+                                    <th style="max-width:100px">Usuario Red</th>
+                                    <th style="min-width:120px">Empresa</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <Virtualize Items="usuarios" Context="emp" >
+                                    <tr @key="emp.UserName" @onclick="(()=>OpenUser(emp.UserName))" >
+                                        <td style="width:80px;">
+<div id="dvAppLogo" class="text-center">
+<img style="min-width:30px; min-height:30px"  
+src="/img/profile/@emp.Photo" alt="Logo" class="img-circle img-size-32 mr-2"  >
+</div>
+</td>  
+
+                                        <td style="max-width:120px;">@emp.UserName </td>
+                                        <td style="max-width:220px;">@emp.DisplayName </td>
+                                        <td>@emp.EmployeeCode </td>
+                                        <td>@emp.Department </td>
+                                        <td>@emp.UserDomain </td>
+                                        <td>@emp.Company </td>
+                                        <td><span class="text-muted">
+                        <i class="fas fa-search"></i>
+                      </span></td>
+                                    </tr>
+                                </Virtualize>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer clearfix">
+                    @usuarios.Count().ToString("N0")
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <br /><br />
+</section>
+
+@code {
+
+    bool loading = true;
+    string Message = "";
+
+    List<ListItem> listas = new List<ListItem>();
+
+    List<UserItem> Datos = new List<UserItem>();
+
+    List<UserItem> usuarios = new List<UserItem>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            listas = (await http.GetFromJsonAsync<List<ListItem>>($"/api/DataList/COMPANY|LOCATION|DEPARTMENT"))
+                      ?? new List<ListItem>();
+
+            await SetUserItems();
+            usuarios = Datos.ToList();
+
+        }
+        catch (Exception ex)
+        {
+            Message = ex.Message;
+            if (Message.Contains("Unauthorized")) { navigation.NavigateTo("/login"); }
+        }
+        loading = false;
+    }
+
+    public string SearchText = "";
+    private string _company { get; set; } = "abonap";
+    private string _status { get; set; } = "A";
+    private string _location { get; set; } = "";
+    private string _departament { get; set; } = "";
+
+    void SelectedCarsChanged(ChangeEventArgs e)
+    {
+        loading = true;
+        StateHasChanged();
+        SearchText = e.Value.ToString().Trim().ToLower();
+        if (SearchText.Length == 0)
+        {
+            usuarios = Datos;
+        }
+
+        else if (SearchText.Length > 2)
+        {
+            usuarios = Datos.Where(a => a.DataString.Contains(SearchText)).ToList();
+        }
+        loading = false;
+        StateHasChanged();
+    }
+
+    private async void OnSelectCompany(ChangeEventArgs e)
+    {
+        _company = e.Value.ToString();
+        await SetUserItems();
+    }
+
+    private async void OnSelectStatus(ChangeEventArgs e)
+    {
+        _status = e.Value.ToString();
+        await SetUserItems();
+    }
+
+    private async void OnSelectLocation(ChangeEventArgs e)
+    {
+        _location = e.Value.ToString();
+        await SetUserItems();
+    }
+
+    private async void OnSelectDepartament(ChangeEventArgs e)
+    {
+        _departament = e.Value.ToString();
+        await SetUserItems();
+    }
+
+    async Task SetUserItems()
+    {
+        loading = true;
+
+        SearchText = "";
+
+        List<string> parametros = new List<string>();
+
+        parametros.Add ( string.Format("'Enabled' : {0}",(_status == "A").ToString().ToLower()) );
+
+        if (_company != "") {  parametros.Add( $" 'CompanyID': '{_company}' "); }
+
+        if (_location != "") { parametros.Add( $" 'PhysicalDeliveryOfficeNameID': '{_location}' ");  }
+
+        if (_departament != "") { parametros.Add( $" 'DepartmentID': '{_departament}' ");  }
+
+        try
+        {
+            var response = await http.PostAsJsonAsync("api/user/search", parametros);
+
+            string data = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                Datos = JsonSerializer.Deserialize<List<UserItem>>
+                          (data, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+                          ?? new List<UserItem>();
+
+                usuarios = Datos.ToList();
+            }
+            else
+            {
+                Message = data;
+            }
+        }
+        catch (Exception ex) { Message = ex.Message; }
+
+        loading = false;
+        StateHasChanged();
+
+    }
+
+    /*
+    ValueTask<ItemsProviderResult<UserItem>> CargarUsuarios(ItemsProviderRequest req){
+        Console.WriteLine(" StartIndex: {0}", req.StartIndex);
+        var cantidadAsolicitar = Math.Min(req.Count, cantidadEmpelados - req.StartIndex);
+        var _usuarios = Datos.Skip(0).Take(30).ToList();
+        var resultado = new ItemsProviderResult<UserItem>(_usuarios, cantidadEmpelados);
+        return ValueTask.FromResult(resultado);
+    }
+    */
+
+    public void OpenUser(string username)
+    {
+        navigation.NavigateTo("/User?usr=" + username.Trim());
+    }
+
+}

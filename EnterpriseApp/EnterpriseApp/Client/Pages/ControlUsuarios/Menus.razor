@@ -1,0 +1,282 @@
+﻿@page "/menu"
+@inject HttpClient http
+@inject IJSRuntime jsRuntime
+@inject AppState appState 
+
+<RedirectToLogin />
+
+        <section class="content">
+
+            <br />
+            <h3 style="margin-left:1em">Menú aplicación</h3>
+            <p style="margin:1em 2em" class="label-default">
+                Grupos de menú por aplicación.
+            </p> <div style="margin:1em 2em" class="text-danger">@((MarkupString)Message)</div>
+            <br />
+
+             <div class="row" style="margin:0 auto; max-width:900px">
+        <div class="col-md-12" >
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        Aplicación
+                    </span>
+                </div>
+                <select id="ddmenu" @bind="CheckSelected" class="form-control">
+                    @foreach (var r in apps.OrderBy(a=>a.Value))
+                    {
+                        <option value="@r.Id"> @r.Value </option>
+                    }
+                </select>
+            </div>
+        </div>
+
+    </div>
+
+                    <div class="row">
+                <div class="col-md-12" style="max-width:900px; margin:1em auto 1em auto">
+
+
+                <div class="card card-info card-outline">
+                  <div class="card-header">
+@if (loading) {
+<div class="spinner-border text-info" style="font-size:small" role="status"><span class="sr-only">Loading...</span></div>                          
+}
+                    <div class="card-tools">
+
+                         <button class="btn btn-default btn-sm" @onclick="(()=>OpenModal( new EnterpriseApp.Shared.Entities.Menu()))">
+                                                        <i class="fa fa-plus"></i> <span style="font-size:small" >AGREGAR</span> 
+                                                    </button>
+
+
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                    </div>
+                  </div>
+                  <div class="card-body table-responsive p-0">
+                    <table id="tbdata" class="table table-striped table-valign-middle">
+                      <thead>
+                      <tr>
+                        <th>Menú</th>
+                        <th>Descripción</th>
+                        <th>URL</th>
+                        <th>Icono</th>
+                        <th>Indice</th>
+                        <th style="width:10%">Inactivo</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+
+                                @foreach (var item in _app.Menus.OrderBy(o=>o.Index))
+                                {
+<tr @onclick="(()=>OpenModal(item))">
+<td>@item.Name</td><td>@item.Descripcion</td><td>@item.Url</td><td>@item.Icon</td><td>@item.Index</td>
+<td>
+@if (item.Inactive)
+{
+<div class="custom-control custom-switch custom-switch-off-danger">
+<input id="customSwitch1" type="checkbox" class="custom-control-input" checked disabled>
+<label class="custom-control-label" for="customSwitch1"></label>
+</div>
+} else
+{
+<div class="custom-control custom-switch "> 
+<input id="customSwitch2" type="checkbox" class="custom-control-input" disabled>
+<label class="custom-control-label" for="customSwitch2"></label>
+</div>
+}
+</td>
+</tr>
+                                }
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+            </div>
+            </div>
+        </section>
+
+            <div class="modal fade @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+            <div id="dv-overlay">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalTitle">Menu</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <EditForm Model="_menu" OnValidSubmit="FrmSubmit">
+                            <DataAnnotationsValidator />
+
+                            <input asp-for="Input.Id" type="hidden" />
+                            <div class="modal-body">
+
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="form-group">
+                                    <InputText @bind-Value=_menu.Name class="form-control" placeholder="Nombre" />
+                                </div>
+                               
+                                <div class="form-group">
+                                    <InputText @bind-Value=_menu.Descripcion class="form-control" placeholder="Descripcion" />
+                                </div>
+                                 <div class="form-group">
+                                    <InputText @bind-Value=_menu.Url class="form-control" placeholder="Url" />
+                                </div>
+                                 <div class="form-group">
+                                    <InputText @bind-Value=_menu.Icon class="form-control" placeholder="Icono" />
+                                </div><div class="form-group">
+                                    <InputNumber @bind-Value=_menu.Index class="form-control" placeholder="Indice" />
+                                </div>
+                                <div class="fg1 form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        <InputCheckbox @bind-Value="_menu.Inactive" id="regInactive" class="custom-control-input custom-control-input-danger" />
+                              <label for="regInactive" class="custom-control-label" > INACTIVO </label>
+                            </div>
+                                </div>
+                                <div class="col-12">
+                                    <span style="font-size:12px" class="text-danger"><ValidationSummary /> @Message </span>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <span class="d-flex flex-grow-1" style="float:left; font-size:x-small" >
+                                    @_menu.CreatedDate.ToString("dd-MM-yyyy hh:mm tt") * 
+                                    @_menu.CreatedBy
+                                 </span>
+                                <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cerrar</button>
+                                <button id="btnSave" type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+@code {
+
+    private List<ListItem> apps = new List<ListItem>();
+    private string selectedItem { get; set; } = "";
+    private string CheckSelected
+    {
+        get
+        {
+            return selectedItem;
+        }
+        set
+        {
+            ChangeEventArgs selectedEventArgs = new ChangeEventArgs();
+            selectedEventArgs.Value = value;
+            OnChangeSelected(selectedEventArgs);
+        }
+    }
+    private async void OnChangeSelected(ChangeEventArgs e)
+    {
+        loading = true;
+        selectedItem = e.Value?.ToString() ?? "" ;
+        _app = await GetApplication(selectedItem);
+        loading = false;
+        StateHasChanged();
+    }
+
+    IJSObjectReference module;
+    bool loading = true; 
+    private string Message = "", ModalDisplay = "", ModalClass = "";
+
+    private EnterpriseApp.Shared.Entities.App _app = new EnterpriseApp.Shared.Entities.App();
+    private EnterpriseApp.Shared.Entities.Menu _menu = new EnterpriseApp.Shared.Entities.Menu();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/profile.js?1");
+
+            apps = await http.GetFromJsonAsync<List<ListItem>>(
+                $"/api/App/Items", new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<ListItem>();
+
+            selectedItem = apps.First().Id;
+            _app = await GetApplication(selectedItem);
+
+        }
+        catch (Exception ex)
+        {
+            Message = ex.Message;
+        }
+
+        loading = false;
+    }
+
+    private async Task<EnterpriseApp.Shared.Entities.App> GetApplication(string id) => 
+                                    await http.GetFromJsonAsync<EnterpriseApp.Shared.Entities.App>(
+                $"/api/App/{id}", new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) 
+                ?? new EnterpriseApp.Shared.Entities.App();
+
+    public async Task OpenModal( EnterpriseApp.Shared.Entities.Menu reg)
+    {
+        _menu = reg;
+        ModalDisplay = "block;";
+        await Task.Delay(100);
+        ModalClass = "show";
+    }
+
+    public async Task CloseModal()
+    {
+        ModalClass = "";
+        await Task.Delay(250);
+        ModalDisplay = "none;";
+    }
+
+    private async void FrmSubmit()
+    {
+        await CloseModal();
+
+        try
+        {
+            var reg = _app.Menus.FirstOrDefault(a => a.Id == _menu.Id);
+            if (reg == null) { _app.Menus.Add(_menu); }
+            else
+            {
+                reg.Name = _menu.Name; reg.Url = _menu.Url; reg.Icon = _menu.Icon; reg.Index = _menu.Index;
+                reg.Descripcion = _menu.Descripcion; reg.Inactive = _menu.Inactive;
+            }
+
+            if (_menu.CreatedBy == "") { _menu.CreatedBy = appState.UserName; }
+            if (_menu.Options == null) { _menu.Options = new List<MenuOpton>(); }
+
+            var postResult = await http.PostAsJsonAsync("/api/App/SaveRol", _app);
+
+            var postContent = (await postResult.Content.ReadAsStringAsync());
+
+            if (postResult.IsSuccessStatusCode)
+            {
+                    _app = JsonSerializer.Deserialize<EnterpriseApp.Shared.Entities.App>(postContent, 
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new EnterpriseApp.Shared.Entities.App();
+
+                await module.InvokeAsync<bool>("showMsg", "success", "Guardado!");
+            }
+            else
+            {
+                await module.InvokeAsync<bool>("showMsg", "error", postContent);
+            }
+        }
+        catch (Exception ex) { 
+            Message = "E:" + ex.Message; 
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    
+
+    public async Task getImage()
+    {
+        if (loading){ return; }
+        await module.InvokeAsync<bool>("getImage");
+    }
+
+}

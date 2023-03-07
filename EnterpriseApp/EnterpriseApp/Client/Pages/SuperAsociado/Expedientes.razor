@@ -1,0 +1,584 @@
+﻿@page "/Expediente"
+
+@inject HttpClient http
+@inject NavigationManager navigation
+@inject IJSRuntime jsRuntime
+
+<RedirectToLogin />
+<style>
+    table#tbsol thead th:nth-child(3),
+    table#tbsol tbody td:nth-child(3),
+    table#tbsol thead th:nth-child(4),
+    table#tbsol tbody td:nth-child(4) {
+        text-align: right;
+    }
+</style>
+
+<section class="content">
+
+    <br />
+    <h3 style="margin-left:1em"> <i class="fas fa-suitcase"></i> Expediente</h3>
+<div style="margin:1em 2em" class="text-danger">@((MarkupString)Message)</div>
+
+
+<div class="row">
+     <div class="col-md-12" style="margin: 0 auto; max-width:900px">
+                    <div class="card card-primary card-outline card-tabs">
+                <div class="card-header border-transparent">
+
+
+                    <div class="input-group input-group-sm" style="width: 300px; display:inline-flex">
+                        <div class="input-group-append" style="margin-right:10px">
+                            CEDULA CLIENTE
+                        </div>
+                        <input id="inputSearch"
+                               type="search" class="form-control float-right" placeholder="buscar" />
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-default">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-tools">
+
+                        <ul class="nav nav-pills ml-auto">
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="#sales-chart" data-toggle="tab"></a>
+                            </li>
+                            <li>
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    <hr />
+                </div>
+              
+
+                    <div class="card-body">
+                        <div class="tab-pane0">
+
+                            <div class="row">
+                                <div class="col-md-8">
+
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label>Nombres</label>
+                                                <span class="form-control form-control-border">
+                                                    MARIA DEL CARMEN
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label>Apellidos</label>
+                                                <span class="form-control form-control-border">
+                                                    PEREZ MARTINEZ
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label>Codigo empleado</label>
+                                                <span class="form-control form-control-border">
+                                                    9765
+                                                </span>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label>Puesto</label>
+                                                <span class="form-control form-control-border">
+                                                   GERENTE DE VENTAS
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label>Fecha Ingreso</label>
+                                                <span class="form-control form-control-border">
+                                                    05/08/2016
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label>Salario</label>
+                                                <span class="form-control form-control-border">
+                                                    205,000.00
+                                                </span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-4" style=" text-align: center; background-color: #f5f5f5;border-radius: 7px; ">
+                                    <div style="display:flex;  text-align:center; margin-top:5px ">
+                                        <img id="imgFirma" style='width: 190px;height: 160px;  margin: auto ' src="./img/cedula-jce.jpg" alt="foto">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label><i class="fas fa-envelope mr-1"></i> Email</label>
+                                        <span class="form-control form-control-border">
+                                            mcperez@gruuporamos.com.do
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label> Cedular</label>
+                                        <span class="form-control form-control-border">
+                                            809-470-2020
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Registrado por </label>
+                                        <span class="form-control form-control-border">
+                                            amonegro
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Supervisor</label>
+                                        <span class="form-control form-control-border">
+                                            RAFAEL VIDAL GARCIA
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label> <i class="fas fa-phone mr-1"></i> Teléfono / Ext.</label>
+                                        <span class="form-control form-control-border">
+                                            809-555-5555
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Fecha creado</label>
+                                        <span class="form-control form-control-border">
+                                            17/01/2023
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+                    </div>
+                </div>
+</div></div>
+
+
+
+
+              <div class="row">
+
+        <div class="col-md-12" style="margin: 0 auto; max-width:900px">
+                
+
+            
+            
+                <div class="card card-primary card-outline card-tabs">
+                    <div class="card-header p-2" style="border-bottom:0">
+                        <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Solicitud de préstamo</a></li>
+                        <li class="nav-item"><a class="nav-link"        href="#inversion" data-toggle="tab">Solicitud de inversión</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Solicitudes</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Productos en Abonap</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="tab-content">
+
+                            <div class="active tab-pane" id="activity">
+
+                                
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">Producto</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control">
+                                                <option>
+                                                    Préstamo personal
+                                                </option>
+                                                <option>
+                                                    Préstamo hipotecario
+                                                </option>
+                                            </select>
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">Tipo Acuerdo</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control">
+                                                <option>
+                                                    Garante del credito
+                                                </option>
+                                                <option>
+                                                    Prestaciones Laborales
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-5">
+                                    <div class="form-group row">
+                                        <label class="col-sm-5 col-form-label" style="text-align:right">Fecha Solicitud</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" value="24/01/2023" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-5 col-form-label" style="text-align:right">Disponible</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" value="357,000" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">Comentario</label>
+                                        <div class="col-sm-9">
+                                            <input type="email" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-5">
+                                    <div class="form-group row">
+                                        <label class="col-sm-5 col-form-label" style="text-align:right">Monto Solicitado</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" required>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                   <div class="form-group row">
+                            <div class="offset-sm-2 col-sm-10">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="exampleCheck2">
+                                    <label class="form-check-label" for="exampleCheck2">Enviar notificacion al colaborador</label>
+                                </div>
+                            </div>
+                        </div>
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-info float-right">ENVIAR SOLICITUD</button>
+                            </div>
+
+                            </div>
+
+                        <div class="tab-pane" id="inversion">
+
+                                
+                            <div class="row">
+                                <div class="col-md-7">
+
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">Inversión</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control">
+                                                <option>
+                                                    Certificados financiero
+                                                </option>
+                                                <option>
+                                                    Cuenta San Super Asociado
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-3 col-form-label">Comentario</label>
+                                        <div class="col-sm-9">
+                                            <input type="email" class="form-control">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-5">
+                                    <div class="form-group row">
+                                        <label class="col-sm-5 col-form-label" style="text-align:right">Fecha Solicitud</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" value="24/01/2023" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-5 col-form-label" style="text-align:right">Monto Inversión</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                   <div class="form-group row">
+                            <div class="offset-sm-2 col-sm-10">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="exampleCheck2">
+                                    <label class="form-check-label" for="exampleCheck2">Enviar notificacion al colaborador</label>
+                                </div>
+                            </div>
+                        </div>
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-info float-right">ENVIAR SOLICITUD</button>
+                            </div>
+
+                            </div>
+
+
+                            <div class="tab-pane" id="timeline">
+
+                            <div class="table-responsive mailbox-messages">
+                                <table id="tbsol" class="table table-hover">
+                                    <thead>
+                                        <tr style="border-top:0">
+                                            <th style="border-top:0">Producto</th>
+                                            <th style="border-top:0">Fecha Solicitud</th>
+                                            <th style="border-top:0">Pre-Aprobado</th>
+                                            <th style="border-top:0">Solicitado</th>
+                                            <th style="border-top:0"></th>
+                                            <th style="border-top:0">Estatus</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Préstamos Personal</td>
+                                            <td>02/06/2022</td>
+                                            <td>350,000</td>
+                                            <td>350,000</td>
+                                            <td class="mailbox-attachment"><i class="fas fa-clock"></i></td>
+                                            <td>
+                                                <a href="/solicitud1">Pendiente Documentos</a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Cuenta San Super Asociado</td>
+                                            <td>02/06/2022</td>
+                                            <td></td>
+                                            <td>150,000</td>
+                                            <td class="mailbox-attachment"><i class="fas fa-clock"></i></td>
+                                            <td>En proceso</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>Préstamo hipotecario</td>
+                                            <td>01/02/2023</td>
+                                            <td>300,000</td>
+                                            <td>510,000</td>
+                                            <td class="mailbox-attachment"><i class="fas fa-ban " style="color:red"></i></td>
+                                            <td>Denegado</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                         <tr>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                            </div>
+
+
+                            <div class="tab-pane" id="settings">
+
+                                <div class="card-body table-responsive p-0">
+                                    <table id="tbroles" class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>No. Producto</th>
+                                                <th>Nombre Producto</th>
+                                                <th>Fecha</th>
+                                                <th>Monto</th>
+                                                <th align="">Balance</th>
+                                                <th>Estatus</th>
+                                                <th>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr>
+                                                <td>10004874</td>
+                                                <td>Cuentas de ahorro</td>
+                                                <td>13/03/2019</td>
+                                                <td>450,000</td>
+                                                <td>450,157</td>
+                                                <td>Activo</td>
+                                                <td>&nbsp;</td>
+                                          </tr>
+                                          <tr>
+                                                <td>20004874</td>
+                                                <td>Préstamo Personal</td>
+                                                <td>05/10/2020</td>
+                                                <td>350,000</td>
+                                                <td>300,000</td>
+                                                <td>Activo</td>
+                                                <td>&nbsp;</td>
+                                          </tr>
+                                        <tr>
+                                            <td>30004874</td>
+                                            <td>Tarjeta de Credito</td>
+                                            <td>18/02/2021</td>
+                                            <td>350,000</td>
+                                            <td>80,470</td>
+                                            <td>Activo</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                                  <tr>
+                                            <td>40004874</td>
+                                            <td>Banca Seguros</td>
+                                            <td>23/11/2020</td>
+                                            <td>500,000</td>
+                                            <td>0</td>
+                                            <td>Activo</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            
+
+            </div>
+        </div>
+
+        <div class="row">
+
+
+
+        </div>
+
+    <br /><br />
+</section>
+
+@code {
+
+    bool loading = false;
+    string Message = "";
+
+    Model.Asociado Reg = new Model.Asociado { Rnc = "" };
+
+    private async void CheckChanged()
+    {
+        loading = true;
+        await Task.Delay(450);
+        Reg.Rnc = "101796822";
+        Reg.Nombre = "GRUPO RAMOS SA";
+        Reg.RazonSocial = "VENTA AL POR MENOR EN HIPERMER";
+        Reg.Fecha = "14/01/1999";
+        Reg.EstatusDGII = "ACTIVO";
+        loading = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void HandleSubmit()
+    {
+        loading = true;
+        await Task.Delay(450);
+        navigation.NavigateTo("asociado");
+    }
+
+}

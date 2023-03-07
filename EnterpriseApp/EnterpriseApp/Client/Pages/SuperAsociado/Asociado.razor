@@ -1,0 +1,707 @@
+﻿@page "/asociado"
+@using Abonap.Users
+
+@inject NavigationManager Navigation
+@inject IJSRuntime jsRuntime
+@inject HttpClient http
+@inject AppState appState
+
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1> <i class="fa fa-users" /> ASOCIADO </h1>
+                @Message
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/Asociado"> <i class="fa fa-reply" /> Back</a></li>
+                    <li class="breadcrumb-item active">Super Asociado</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card card-primary card-outline">
+                    <div class="card-body box-profile">
+                        <div class="text-center">
+                            @if (loading)
+                            {
+                                <img class="profile-user-img img-fluid img-circle"
+                                 src="/img/gruporamos.png"
+                                  alt="User profile picture">
+                            }
+                            else
+                            {
+                                <img class="profile-user-img img-fluid img-circle"
+                                  src="/img/gruporamos.png"
+                                 alt="User profile picture">
+                            }
+                        </div>
+
+                        <h3 class="profile-username text-center">@Reg.Rnc</h3>
+
+                        <p class="text-muted text-center">@Reg.Nombre</p>
+                        <p class="text-muted text-center">@Reg.RazonSocial</p>
+
+                        <ul class="list-group list-group-unbordered mb-3">
+                            <li class="list-group-item">
+                                <strong><i class="fas fa-user mr-1"></i> Usuario Empresa</strong>
+                                <p class="text-muted" style="margin:0 0 0 2em">@Reg.NombreUsuario</p>
+                            </li>
+                            <li class="list-group-item">
+                                <strong><i class="fas fa-suitcase mr-1"></i> Puesto</strong>
+                                <p class="text-muted" style="margin:0 0 0 2em">@Reg.Puesto</p>
+                            </li>
+                            <li class="list-group-item">
+                                <strong><i class="fas fa-envelope mr-1"></i> Email</strong>
+                                <p class="text-muted" style="margin:0 0 0 2em">@Reg.Email</p>
+                            </li>
+                            <li class="list-group-item" style="margin-bottom:0; padding-bottom:0; border-bottom:0">
+                                <strong><i class="fas fa-phone mr-1"></i> Telefonos</strong>
+                                <p class="text-muted" style="margin:0 0 0 2em">@Reg.Telefono</p>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-9">
+                <div class="card card-primary card-outline card-tabs">
+                    <div class="card-header p-2" style="border-bottom:0">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Lista Empleados</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Agregar Empleado</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Cargar Archivo Empleados</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="active tab-pane" id="activity">
+
+
+                                <div class="table-responsive mailbox-messages" >
+                                    <table class="table table-hover" >
+                                        <thead>
+                                            <tr style="border-top:0">
+                                                <th style="border-top:0">Nombre colaborador</th>
+                                                <th style="border-top:0">Cedula</th>
+                                                <th style="border-top:0">Cargo</th>
+                                                <th style="border-top:0">Pre-Aprobado</th>
+                                                <th style="border-top:0"></th>
+                                                <th style="border-top:0">Estatus</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                           <tr>
+                                                <td>Reynoso Martinez</td>
+                                                <td>001-1234567-8</td>
+                                                <td>Generente de negocios</td>
+                                                <td>450,000</td>
+                                                 <td class="mailbox-attachment"><i class="fas fa-check"></i></td>
+                                                <td>
+                                                    <a href="/solicitud" >Disponible</a>
+                                                </td>
+                                           </tr>
+                                            <tr>
+                                                <td>Tejada, Rita</td>
+                                                <td>001-1234567-8</td>
+                                                <td>Agente de Compras Locales</td>
+                                                <td>155,009</td>
+                                                 <td class="mailbox-attachment"><i class="fas fa-check"></i></td>
+                                                <td>Disponible</td>
+                                            </tr>
+                                           	<tr>
+                                                <td>De Oleo, Railis Anneris</td>
+                                                <td>001-1234567-8</td>
+                                                <td>Ejecutivo Jr. de Ventas</td>
+                                                <td>355,000</td>
+                                                 <td class="mailbox-attachment"><i class="fas fa-check"></i></td>
+                                                <td>Disponible</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Carvajal, Jaimi</td>
+                                                <td>001-1234567-8</td>
+                                                <td>Asistente Adm. de Ventas</td>
+                                                <td>0.00</td>
+                                                <td class="mailbox-attachment"><i class="fas fa-clock"></i></td>
+                                                <td>Pendiente</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Gomez Moris</td>
+                                                <td>001-1234567-8</td>
+                                                <td>Encargado I de Almacen</td>
+                                                <td>105,000</td>
+                                                <td class="mailbox-attachment"><i class="fas fa-check"></i></td>
+                                                <td>Disponible</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Hernandez, Gina</td>
+                                                <td>001-1234567-8</td>
+                                                <td>Abogado</td>
+                                                <td>205,000</td>
+                                                <td class="mailbox-attachment"><i class="fas fa-ban " style="color:red"></i></td>
+                                                <td>Denegado</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Otano, Nelson</td>
+                                                <td>001-1234567-8</td>
+                                                <td>Gerente Centro Distribucion</td>
+                                                <td>0.00</td>
+                                                <td class="mailbox-attachment"><i class="fas fa-clock"></i></td>
+                                                <td>Pendiente</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Rosario, Ernesto</td>
+                                                <td>001-1234567-8</td>
+                                                <td>Encargado de Medioambiente</td>
+                                                <td>225,000</td>
+                                                <td class="mailbox-attachment"><i class="fas fa-check"></i></td>
+                                                <td>Disponible</td>
+                                            </tr>
+                        
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <hr />
+
+                                <div class="mailbox-controls">
+
+                                    <button type="button" class="btn btn-default btn-sm">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                    <div class="float-right">
+                                        1-8/300
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-default btn-sm">
+                                                <i class="fas fa-chevron-left"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-default btn-sm">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="tab-pane" id="timeline">
+
+                                <div class="row">
+                                    <div class="col-md-8">
+
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label>Nombres</label>
+                                                    <span class="form-control ">
+                                                        @user.GivenName
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label>Apellidos</label>
+                                                    <span class="form-control ">
+                                                        @user.Sn
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label>Codigo empleado</label>
+                                                    <span class="form-control ">
+                                                        @user.PostOfficeBox
+                                                    </span>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label>Puesto</label>
+                                                    <span class="form-control ">
+                                                        @user.Username  @if (user.IsUserAD)
+                                                        {
+                                                            <span style="margin-left:1em" class="text-primary">  <i class="fa fa-globe"></i> </span>
+                                                        }
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label>Fecha Ingreso</label>
+                                                    <span class="form-control ">
+                                                        @user.SAMAccountName
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <label>Salario</label>
+                                                    <span class="form-control ">
+                                                        @user.MailNickname
+                                                    </span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-4" style=" text-align: center; background-color: #f5f5f5;border-radius: 7px; ">
+                                        <div style="display:flex;  text-align:center; margin-top:5px ">
+                                            <img id="imgFirma" style='width: 190px;height: 160px;  margin: auto ' src="./img/empleado.jpg" alt="foto">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label><i class="fas fa-envelope mr-1"></i> Email</label>
+                                            <span class="form-control ">
+                                                @user.Mail
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label> Cedular</label>
+                                            <span class="form-control ">
+                                                @user.Mobile
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Registrador por </label>
+                                            <span class="form-control ">
+                                                @user.PostalCode
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Supervisor</label>
+                                            <span class="form-control ">
+                                                @user.Manager
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label> <i class="fas fa-phone mr-1"></i> Teléfono / Ext.</label>
+                                            <span class="form-control ">
+                                                @user.TelephoneNumber
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Fecha creado</label>
+                                            <span class="form-control ">
+                                                @user.WhenCreated
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                  <div class="row" style="text-align:right; margin-right:1em">
+                            <button id="btnSave" type="submit" class="btn btn-primary">AGREGAR EMPLEADO</button>
+                        </div>
+
+                            </div>
+
+
+                            <div class="tab-pane" id="settings">
+
+                                <div class="card-body table-responsive p-0">
+                                    <table id="tbroles" class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Cedula</th>
+                                                <th>Nombre Colaborador</th>
+                                                <th>Puesto</th>
+                                                <th>Email</th>
+                                                <th>Telefono</th>
+                                                <th>Fecha Ingreso</th>
+                                                <th>Salario</th>
+                                                <th>
+                                                    <button type="button" class="btn btn-outline-success btn-sm" @onclick="(()=>OpenModal( new UserRol(), 0))">
+                                                        <i class="fas fa-upload"></i> Excel
+                                                    </button>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                          </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+<div class="modal fade @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div id="dv-overlay">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"> Cargar lista de colaboradores</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <EditForm Model="rol" OnValidSubmit="FrmSubmit">
+                    <DataAnnotationsValidator />
+
+                        <div class="modal-body">
+                           
+                            
+<div id="actions" class="row">
+
+<div class="btn-group w-100" style="margin:3em 1em">
+
+<button type="submit" class="btn btn-outline-success col start">
+<i class="fas fa-upload"></i>
+<span>Seleccione el archivo de excel a cargar</span>
+</button>
+
+                            
+
+                            </div>
+                        </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button id="btnSave" type="submit" class="btn btn-primary">Cargar</button>
+                            <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cerrar</button>
+                        </div>
+                    
+
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    Model.Asociado Reg = new Model.Asociado { Rnc = "" };
+
+
+    string usr = string.Empty;
+
+    bool loading = true;
+    private Abonap.Users.User user = new Abonap.Users.User();
+    string Message = ""; IJSObjectReference module;
+    private List<ListApp> apps = new List<ListApp>();
+    private List<DataItem> roles = new List<DataItem>();
+    int action = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Reg.Rnc = "101796822";
+        Reg.Nombre = "GRUPO RAMOS SA";
+        Reg.RazonSocial = "VENTA AL POR MENOR EN HIPERMER";
+        Reg.Fecha = "14/01/1999";
+        Reg.EstatusDGII = "ACTIVO";
+
+        Reg.NombreUsuario = "Argelia Monegro Castro";
+        Reg.Puesto = " Gerente Senior de Productos";
+        Reg.Telefono = "829-470-2865";
+        Reg.Email = "amonegro@abonap.com.do";
+
+        loading = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private string ModalDisplay = "", ModalClass = "";
+    UserRol rol = new UserRol();
+
+    public async Task OpenModal(UserRol reg, int _action)
+    {
+        action = _action;
+        rol = reg;
+        DropdownRoles();
+        rol = reg;
+
+        Console.WriteLine(JsonSerializer.Serialize(rol));
+        ModalDisplay = "block;";
+        await Task.Delay(100);
+        ModalClass = "show";
+        StateHasChanged();
+    }
+
+    public async Task CloseModal()
+    {
+        ModalClass = "";
+        await Task.Delay(250);
+        ModalDisplay = "none;";
+    }
+
+    void OnSelectApps(ChangeEventArgs e)
+    {
+        rol.App = e.Value?.ToString() ?? "";
+        DropdownRoles();
+    }
+
+    private void OnSelectRols(ChangeEventArgs e)
+    {
+        rol.Rol = e.Value?.ToString() ?? "";
+    }
+
+    private void DropdownRoles()
+    {
+        if (rol.App == "") { roles = new List<DataItem>(); }
+        else { roles = apps.Where(a => a.Id == rol.App).First().Rols; }
+    }
+
+
+    private async void FrmSubmit()
+    {
+        await CloseModal();
+
+        try
+        {
+            SaveRol req = new SaveRol { UserName = user.Username, App = rol.App, Rol = rol.Rol, UpdateBy = appState.UserName };
+
+            var postResult = await http.PostAsJsonAsync((action != 2) ? "api/user/RolSave" : "api/user/RolDel", req);
+
+            var postContent = (await postResult.Content.ReadAsStringAsync());
+
+            if (postResult.IsSuccessStatusCode)
+            {
+                user.Rols = JsonSerializer.Deserialize<List<UserRol>>(postContent,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<UserRol>();
+                if (action != 2)
+                {
+                    await module.InvokeAsync<bool>("showMsg", "success", "Guardado!");
+                }
+                else
+                {
+                    await module.InvokeAsync<bool>("showMsg", "warning", "Eliminado!");
+                }
+            }
+            else
+            {
+                await module.InvokeAsync<bool>("showMsg", "error", postContent);
+            }
+        }
+        catch (Exception ex)
+        {
+            Message = "E:" + ex.Message;
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    FileData fileData = new FileData();
+
+    private async Task OnFileSelection(InputFileChangeEventArgs e)
+    {
+        Message = "";
+
+        //visible = "block";
+
+        if (!EnterpriseApp.Shared.Tools.IsImage(e.File.Name))
+        {
+            Message = "Seleccione una imagen valida.  "; //visible = "none";
+
+            await module.InvokeAsync<bool>("showMsg", "error", "Seleccione una imagen valida.  ");
+
+            return;
+
+        }
+
+        string imageType = e.File.ContentType;
+        var resizedImage = await e.File.RequestImageFileAsync(imageType, 466, 248);
+        var buffers = new byte[resizedImage.Size];
+        await resizedImage.OpenReadStream().ReadAsync(buffers);
+
+        var res = await http.PostAsJsonAsync($"/api/User/Firma/{appState.UserName}/{user.Username}",
+        Convert.ToBase64String(buffers));
+
+        var postContent = (await res.Content.ReadAsStringAsync()).Replace("\"", "");
+
+        if (!res.IsSuccessStatusCode)
+        {
+            Message = postContent;
+            await module.InvokeAsync<bool>("showMsg", "error", "Error cargando la firma");
+        }
+        else
+        {
+            Message = "";
+            user.Signature = postContent;
+            await module.InvokeAsync<bool>("showMsg", "success", "Firma guardada.");
+        }
+
+        //visible = "none";
+        StateHasChanged();
+    }
+
+    private Cfirma Fmodal { get; set; } = new Cfirma();
+
+    private async Task Mfirma()
+    {
+        await Fmodal.Open();
+    }
+
+    public async Task getImage()
+    {
+        if (loading) { return; }
+        await module.InvokeAsync<bool>("getImage");
+    }
+
+}

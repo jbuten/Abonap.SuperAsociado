@@ -1,0 +1,174 @@
+﻿@page "/dashboard"
+
+@inject HttpClient http
+@inject IJSRuntime jsRuntime
+
+<RedirectToLogin />
+
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Dashboard</h1>                         @if (loading)
+                        {
+                          <div class="spinner-border text-info" style="font-size:small" role="status">
+  <span class="sr-only">Loading...</span>
+</div>                          
+                        }
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="home" >Home</a></li>
+              <li class="breadcrumb-item active">Dashboard v1</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br />
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-3 col-6">
+            <div class="small-box bg-info">
+              <div class="inner">
+                <h3>@total.ToString("n0")</h3>
+
+                <p>Usuarios registrados</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-users"></i>
+              </div>
+             <a href="#"  onclick="javascript:return false" class="small-box-footer">Mas info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-6">
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h3>@activos.ToString("n0")</h3>
+
+                <p>Usuarios activos</p>
+              </div>
+              <div class="icon">
+                <i class="fa fa-thumbs-up"></i>
+              </div>
+              <a href="#"  onclick="javascript:return false" class="small-box-footer">Mas info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <div class="col-lg-3 col-6">
+            <div class="small-box bg-danger">
+              <div class="inner">
+                <h3>@inactivos.ToString("n0")</h3>
+
+                <p>Usuarios inactivos</p>
+              </div>
+              <div class="icon">
+                <i class="fa fa-thumbs-down"></i>
+              </div>
+              <a href="#"  onclick="javascript:return false" class="small-box-footer">Mas info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-primary">
+              <div class="inner">
+                <h3>@apps.ToString("n0")</h3>
+
+                <p>Aplicaciones</p>
+              </div>
+              <div class="icon">
+                <i class="fa  fa-desktop"></i>
+              </div>
+              <a href="#"  onclick="javascript:return false" class="small-box-footer">Mas info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-7">
+            <!-- interactive chart -->
+            <div class="card card-primary card-outline">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="far fa-chart-bar"></i>
+                  Usabilidad de las aplicaciones
+                </h3>
+
+                <div class="card-tools">
+                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <canvas id="myChart" style="width:100%;"></canvas>
+              </div>
+              <!-- /.card-body-->
+            </div>
+            <!-- /.card -->
+
+          </div>
+
+           <div class="col-5">
+            <!-- interactive chart -->
+            <div class="card card-primary card-outline">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="far fa-chart-pie"></i>
+                  Usuarios por aplicaciones
+                </h3>
+
+                <div class="card-tools">
+                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <canvas id="myChart2" style="width:100%;"></canvas>
+              </div>
+              <!-- /.card-body-->
+            </div>
+            <!-- /.card -->
+
+          </div>
+
+
+        </div>
+
+    </div>
+</section>
+
+@code {
+    bool loading = false;
+
+    IJSObjectReference module;
+    string Message = "";
+    int total, activos, inactivos, apps;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/daskboard1.js?3");
+            await module.InvokeAsync<bool>("showChart");
+
+            var data = (await http.GetFromJsonAsync<List<DataItem>>($"/api/app/Info"))
+                      ?? new List<DataItem>();
+
+            activos = int.Parse(data.First(a => a.Id == "A").Value);
+            inactivos = int.Parse(data.First(a => a.Id == "I").Value);
+            apps = int.Parse(data.First(a => a.Id == "apps").Value);
+            total = activos + inactivos;
+
+        }
+        catch (Exception ex)
+        {
+            Message = ex.Message;
+        }
+        loading = false;
+    }
+
+}

@@ -1,0 +1,317 @@
+﻿@page "/registro"
+@using Abonap.Users;
+
+@inject NavigationManager Navigation
+@inject IJSRuntime jsRuntime
+@inject HttpClient http
+@inject AppState appState
+
+@inject NavigationManager navigation
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1> <i class="fa fa-user-plus" /> Registrar Colaborador</h1>
+                <p style="margin:1em 2em" class="label-default">
+                    Administracion de colaboradores
+                </p>
+                @Message
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/registro"> <i class="fa fa-reply" /> Back</a></li>
+                    <li class="breadcrumb-item active">Super Asociado</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<br />
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-md-12" style="max-width:1000px; margin:0em auto 1em auto">
+                <div class="card card-primary card-outline card-tabs">
+                    <div class="card-header">
+                        <label for="inputEmail3" class="col-sm-1 col-form-label" style="width: 100px; display:inline-flex">BUSCAR</label>
+                        <div class="input-group input-group-sm" style="width: 300px; display:inline-flex">
+                            <input id="inputSearch"
+                                   type="search" class="form-control float-right" />
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-default">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card-tools">
+                            <button type="button" id="btnGet" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-plus"></i> Agregar
+                            </button>
+
+                        </div>
+                    </div>
+
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Nombres</label>
+                                            <input type="text" class="form-control " />
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Apellidos</label>
+                                            <input type="text" class="form-control " />
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Codigo empleado</label>
+                                            <input type="text" class="form-control "/>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Puesto</label>
+                                            <input type="text" class="form-control " />
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Fecha Ingreso</label>
+                                            <input type="text" class="form-control " />
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>Salario</label>
+                                            <input type="text" class="form-control " />
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-4" style=" text-align: center; background-color: #f5f5f5;border-radius: 7px; ">
+                                <div style="display:flex;  text-align:center; margin-top:5px ">
+                                    <img id="imgFirma" style='width: 190px;height: 160px;  margin: auto ' src="./img/empleado.jpg" alt="foto">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label><i class="fas fa-envelope mr-1"></i> Email</label>
+                                    <input type="text" class="form-control "/>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label> Cedular</label>
+                                    <input type="text" class="form-control " />
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label>Registrador por </label>
+                                    <input type="text" class="form-control " readonly />
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label>Supervisor</label>
+                                    <input type="text" class="form-control " />
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label> <i class="fas fa-phone mr-1"></i> Teléfono / Ext.</label>
+                                    <input type="text" class="form-control " />
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label>Fecha creado</label>
+                                    <input type="text" class="form-control " readonly />
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row" style="text-align:right; margin-right:1em">
+                            <button id="btnSave" type="submit" class="btn btn-primary">GUARDAR CAMBIOS</button>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+
+
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+@code {
+
+    UserRol rol = new UserRol();
+
+    public async Task OpenModal(UserRol reg, int _action)
+    {
+        action = _action;
+        rol = reg;
+
+        Console.WriteLine(JsonSerializer.Serialize(rol));
+        ModalDisplay = "block;";
+        await Task.Delay(100);
+        ModalClass = "show";
+        StateHasChanged();
+    }
+
+    private async void CheckChanged()
+    {
+        loading = true;
+        await Task.Delay(450);
+        Reg.Rnc = "101796822";
+        Reg.Nombre = "GRUPO RAMOS SA";
+        Reg.RazonSocial = "VENTA AL POR MENOR EN HIPERMER";
+        Reg.Fecha = "14/01/1999";
+        Reg.EstatusDGII = "ACTIVO";
+        loading = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void HandleSubmit()
+    {
+        loading = true;
+        await Task.Delay(450);
+        navigation.NavigateTo("asociado");
+    }
+
+}
+
+
+@code {
+
+    Model.Asociado Reg = new Model.Asociado { Rnc = "" };
+
+    string usr = string.Empty;
+
+    bool loading = true;
+    private Abonap.Users.User user = new Abonap.Users.User();
+    string Message = ""; IJSObjectReference module;
+    private List<ListApp> apps = new List<ListApp>();
+    private List<DataItem> roles = new List<DataItem>();
+    int action = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Reg.Rnc = "101796822";
+        Reg.Nombre = "GRUPO RAMOS SA";
+        Reg.RazonSocial = "VENTA AL POR MENOR EN HIPERMER";
+        Reg.Fecha = "14/01/1999";
+        Reg.EstatusDGII = "ACTIVO";
+
+        Reg.NombreUsuario = "Argelia Monegro Castro";
+        Reg.Puesto = " Gerente Senior de Productos";
+        Reg.Telefono = "829-470-2865";
+        Reg.Email = "amonegro@abonap.com.do";
+
+        loading = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private string ModalDisplay = "", ModalClass = "";
+
+    public async Task CloseModal()
+    {
+        ModalClass = "";
+        await Task.Delay(250);
+        ModalDisplay = "none;";
+    }
+
+
+    FileData fileData = new FileData();
+
+    private async Task OnFileSelection(InputFileChangeEventArgs e)
+    {
+        Message = "";
+
+        //visible = "block";
+
+        if (!EnterpriseApp.Shared.Tools.IsImage(e.File.Name))
+        {
+            Message = "Seleccione una imagen valida.  "; //visible = "none";
+
+            await module.InvokeAsync<bool>("showMsg", "error", "Seleccione una imagen valida.  ");
+
+            return;
+
+        }
+
+        string imageType = e.File.ContentType;
+        var resizedImage = await e.File.RequestImageFileAsync(imageType, 466, 248);
+        var buffers = new byte[resizedImage.Size];
+        await resizedImage.OpenReadStream().ReadAsync(buffers);
+
+        var res = await http.PostAsJsonAsync($"/api/User/Firma/{appState.UserName}/{user.Username}",
+        Convert.ToBase64String(buffers));
+
+        var postContent = (await res.Content.ReadAsStringAsync()).Replace("\"", "");
+
+        if (!res.IsSuccessStatusCode)
+        {
+            Message = postContent;
+            await module.InvokeAsync<bool>("showMsg", "error", "Error cargando la firma");
+        }
+        else
+        {
+            Message = "";
+            user.Signature = postContent;
+            await module.InvokeAsync<bool>("showMsg", "success", "Firma guardada.");
+        }
+
+        //visible = "none";
+        StateHasChanged();
+    }
+
+    private Cfirma Fmodal { get; set; } = new Cfirma();
+
+    private async Task Mfirma()
+    {
+        await Fmodal.Open();
+    }
+
+    public async Task getImage()
+    {
+        if (loading) { return; }
+        await module.InvokeAsync<bool>("getImage");
+    }
+
+}

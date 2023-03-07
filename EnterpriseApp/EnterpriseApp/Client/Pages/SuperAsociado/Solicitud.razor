@@ -1,0 +1,471 @@
+﻿@page "/solicitud"
+
+@inject NavigationManager Navigation
+@inject IJSRuntime jsRuntime
+@inject HttpClient http
+@inject AppState appState
+
+@inject NavigationManager navigation
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1> <i class="fa fa-paper-plane" /> SOLICITUD DE PRODUCTO  </h1>
+                @Message
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/asociado"> <i class="fa fa-reply" /> Back</a></li>
+                    <li class="breadcrumb-item active">Super Asociado</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card card-primary card-outline">
+                    <div class="card-body box-profile">
+                        <div class="text-center">
+                            @if (loading)
+                            {
+                                <img class="profile-user-img img-fluid img-circle"
+                                 src="/img/gruporamos.png"
+                                 alt="User profile picture">
+                            }
+                            else
+                            {
+                                <img class="profile-user-img img-fluid img-circle"
+                                 src="/img/gruporamos.png"
+                                 alt="User profile picture">
+                            }
+                        </div>
+
+                        <h3 class="profile-username text-center">@Reg.Rnc</h3>
+
+                        <p class="text-muted text-center">@Reg.Nombre</p>
+                        <p class="text-muted text-center">@Reg.RazonSocial</p>
+
+                        <ul class="list-group list-group-unbordered mb-3">
+                            <li class="list-group-item">
+                                <strong><i class="fas fa-user mr-1"></i> Usuario Empresa</strong>
+                                <p class="text-muted" style="margin:0 0 0 2em">@Reg.NombreUsuario</p>
+                            </li>
+                            <li class="list-group-item">
+                                <strong><i class="fas fa-suitcase mr-1"></i> Puesto</strong>
+                                <p class="text-muted" style="margin:0 0 0 2em">@Reg.Puesto</p>
+                            </li>
+                            <li class="list-group-item">
+                                <strong><i class="fas fa-envelope mr-1"></i> Email</strong>
+                                <p class="text-muted" style="margin:0 0 0 2em">@Reg.Email</p>
+                            </li>
+                            <li class="list-group-item" style="margin-bottom:0; padding-bottom:0; border-bottom:0">
+                                <strong><i class="fas fa-phone mr-1"></i> Telefonos</strong>
+                                <p class="text-muted" style="margin:0 0 0 2em">@Reg.Telefono</p>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-9">
+                <div class="card card-primary card-outline card-tabs">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-user"></i> CLIENTE FINAL</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-pane0">
+
+                            <div class="row">
+                                <div class="col-md-8">
+
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label>Nombres</label>
+                                                <span class="form-control form-control-border">
+                                                    MARIA DEL CARMEN
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label>Apellidos</label>
+                                                <span class="form-control form-control-border">
+                                                    PEREZ MARTINEZ
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label>Codigo empleado</label>
+                                                <span class="form-control form-control-border">
+                                                    9765
+                                                </span>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label>Puesto</label>
+                                                <span class="form-control form-control-border">
+                                                   GERENTE DE VENTAS
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label>Fecha Ingreso</label>
+                                                <span class="form-control form-control-border">
+                                                    05/08/2016
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label>Salario</label>
+                                                <span class="form-control form-control-border">
+                                                    205,000.00
+                                                </span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-4" style=" text-align: center; background-color: #f5f5f5;border-radius: 7px; ">
+                                    <div style="display:flex;  text-align:center; margin-top:5px ">
+                                        <img id="imgFirma" style='width: 190px;height: 160px;  margin: auto ' src="./img/cedula-jce.jpg" alt="foto">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label><i class="fas fa-envelope mr-1"></i> Email</label>
+                                        <span class="form-control form-control-border">
+                                            mcperez@gruuporamos.com.do
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label> Cedular</label>
+                                        <span class="form-control form-control-border">
+                                            809-470-2020
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Registrado por </label>
+                                        <span class="form-control form-control-border">
+                                            amonegro
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Supervisor</label>
+                                        <span class="form-control form-control-border">
+                                            RAFAEL VIDAL GARCIA
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label> <i class="fas fa-phone mr-1"></i> Teléfono / Ext.</label>
+                                        <span class="form-control form-control-border">
+                                            809-555-5555
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Fecha creado</label>
+                                        <span class="form-control form-control-border">
+                                            17/01/2023
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+                    </div>
+                </div>
+            
+                                    
+    <EditForm Model="@Reg" OnSubmit="@HandleSubmit">
+
+    <div class="row">
+
+        <div class="col-md-12" style="margin: 0 auto; max-width:900px">
+            <div class="card card-info card-outline  ">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="fas fa-tablet"></i> SOLICITUD</h3>
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                    <div class="card-body">
+
+
+                    <div class="row">
+                        <div class="col-md-7">
+                              <div class="form-group row">
+                        <label  class="col-sm-3 col-form-label">Tipo Acuerdo</label>
+                        <div class="col-sm-9">
+                                                    <select class="form-control">
+                                <option>
+                                                            Referido por Empresa
+                                </option>
+                                <option>
+                                                            Garantia por Prestaciones Laborales
+                                </option>
+                                                        <option>
+                                                            Cuotas en Pago de Nomina
+                                                        </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                            <label  class="col-sm-3 col-form-label">Tipo Producto</label>
+                            <div class="col-sm-9">
+                                                    <select class="form-control">
+                                                        <option>
+                                                            Préstamos personal
+                                                        </option>
+                                                        <option>
+                                                            Préstamos hipotecario
+                                                        </option>
+                                                    </select>
+                            </div>
+                        </div>
+
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="form-group row">
+                                <label class="col-sm-5 col-form-label" style="text-align:right">Fecha Solicitud</label>
+                                <div class="col-sm-7">
+                                        <input type="text" class="form-control" value="24/01/2023" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-5 col-form-label" style="text-align:right">Disponible</label>
+                                <div class="col-sm-7">
+                                        <input type="text" class="form-control" value="357,000" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr /> 
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Comentario</label>
+                                <div class="col-sm-9">
+                                    <input type="email" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="form-group row">
+                                <label class="col-sm-5 col-form-label" style="text-align:right">Monto Solicitado</label>
+                                <div class="col-sm-7">
+                                        <input type="text" class="form-control" required>
+                                </div>
+                            </div>
+           
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                            <div class="offset-sm-2 col-sm-10">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="exampleCheck2">
+                                    <label class="form-check-label" for="exampleCheck2">Enviar notificacion al cliente</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer">
+                                            <button type="submit" class="btn btn-info float-right">ENVIAR SOLICITUD</button>
+                    </div>
+        </div>
+
+    </div>
+    </div>
+
+    </EditForm>
+
+
+
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+@code {
+
+
+    private async void CheckChanged()
+    {
+        loading = true;
+        await Task.Delay(450);
+        Reg.Rnc = "101796822";
+        Reg.Nombre = "GRUPO RAMOS SA";
+        Reg.RazonSocial = "VENTA AL POR MENOR EN HIPERMER";
+        Reg.Fecha = "14/01/1999";
+        Reg.EstatusDGII = "ACTIVO";
+        loading = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void HandleSubmit()
+    {
+        loading = true;
+        await Task.Delay(450);
+        navigation.NavigateTo("asociado");
+    }
+
+}
+
+
+@code {
+
+    Model.Asociado Reg = new Model.Asociado { Rnc = "" };
+
+
+    string usr = string.Empty;
+
+    bool loading = true;
+    private Abonap.Users.User user = new Abonap.Users.User();
+    string Message = ""; IJSObjectReference module;
+    private List<ListApp> apps = new List<ListApp>();
+    private List<DataItem> roles = new List<DataItem>();
+    int action = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Reg.Rnc = "101796822";
+        Reg.Nombre = "GRUPO RAMOS SA";
+        Reg.RazonSocial = "VENTA AL POR MENOR EN HIPERMER";
+        Reg.Fecha = "14/01/1999";
+        Reg.EstatusDGII = "ACTIVO";
+
+        Reg.NombreUsuario = "Argelia Monegro Castro";
+        Reg.Puesto = " Gerente Senior de Productos";
+        Reg.Telefono = "829-470-2865";
+        Reg.Email = "amonegro@abonap.com.do";
+
+        loading = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private string ModalDisplay = "", ModalClass = "";
+
+    public async Task CloseModal()
+    {
+        ModalClass = "";
+        await Task.Delay(250);
+        ModalDisplay = "none;";
+    }
+
+
+    FileData fileData = new FileData();
+
+    private async Task OnFileSelection(InputFileChangeEventArgs e)
+    {
+        Message = "";
+
+        //visible = "block";
+
+        if (!EnterpriseApp.Shared.Tools.IsImage(e.File.Name))
+        {
+            Message = "Seleccione una imagen valida.  "; //visible = "none";
+
+            await module.InvokeAsync<bool>("showMsg", "error", "Seleccione una imagen valida.  ");
+
+            return;
+
+        }
+
+        string imageType = e.File.ContentType;
+        var resizedImage = await e.File.RequestImageFileAsync(imageType, 466, 248);
+        var buffers = new byte[resizedImage.Size];
+        await resizedImage.OpenReadStream().ReadAsync(buffers);
+
+        var res = await http.PostAsJsonAsync($"/api/User/Firma/{appState.UserName}/{user.Username}",
+        Convert.ToBase64String(buffers));
+
+        var postContent = (await res.Content.ReadAsStringAsync()).Replace("\"", "");
+
+        if (!res.IsSuccessStatusCode)
+        {
+            Message = postContent;
+            await module.InvokeAsync<bool>("showMsg", "error", "Error cargando la firma");
+        }
+        else
+        {
+            Message = "";
+            user.Signature = postContent;
+            await module.InvokeAsync<bool>("showMsg", "success", "Firma guardada.");
+        }
+
+        //visible = "none";
+        StateHasChanged();
+    }
+
+    private Cfirma Fmodal { get; set; } = new Cfirma();
+
+    private async Task Mfirma()
+    {
+        await Fmodal.Open();
+    }
+
+    public async Task getImage()
+    {
+        if (loading) { return; }
+        await module.InvokeAsync<bool>("getImage");
+    }
+
+}

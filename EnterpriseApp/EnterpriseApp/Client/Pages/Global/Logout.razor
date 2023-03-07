@@ -1,0 +1,23 @@
+﻿@page "/logout"
+@inject NavigationManager NavigationManager
+@inject ILoginService LoginService
+@inject AppState appState
+
+<div id="app-overlay">
+    <div class="app-spinner"></div>
+    <br />
+    Cargando ...
+</div>
+
+<h1>Cerrando sesion</h1>
+
+@code {
+
+    protected override Task OnInitializedAsync()
+    {
+        LoginService.Logout();
+        appState.SetLogin(false, "none");
+        NavigationManager.NavigateTo("/Login");
+        return base.OnInitializedAsync();
+    }
+}

@@ -1,0 +1,19 @@
+﻿.box {
+    width: 80%;
+    min-height: 60vh;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* not really needed with auto margin on img*/
+    flex-direction: column;
+}
+
+    .box img {
+        border-radius: 10px;
+        display: block;
+        width: 80%;
+        min-width: 100px;
+        max-width: 550px; /*actual image width*/
+        height: auto; /* maintain aspect ratio*/
+        margin: auto; /*optional centering of image*/
+    }

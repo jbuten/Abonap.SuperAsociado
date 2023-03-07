@@ -1,0 +1,9 @@
+﻿table#tbdata thead th:nth-child(6),
+table#tbdata tbody td:nth-child(6) {
+    text-align: center;
+}
+
+table#tbdata tbody tr:hover {
+    background-color: #f8f6e6;
+    cursor: pointer;
+}

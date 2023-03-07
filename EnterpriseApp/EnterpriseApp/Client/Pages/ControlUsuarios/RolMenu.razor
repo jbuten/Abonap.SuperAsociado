@@ -1,0 +1,299 @@
+﻿@page "/RolMenu"
+@inject HttpClient http
+@inject IJSRuntime jsRuntime
+
+<RedirectToLogin />
+
+<section class="content">
+    
+    <br />
+
+    <h3 style="margin-left:1em">Rol permisos</h3>
+    
+    <p style="margin:1em 2em" class="label-default">
+        Administracion de acceso por perfil de usuario (Roles).     @if (loading) {
+<div class="spinner-border text-info" style="font-size:small" role="status"><span class="sr-only">Loading...</span></div>                          
+} 
+    </p>
+    <div style="margin:1em 2em" class="text-danger">@((MarkupString)Message)</div>
+    <br />
+  
+    <EditForm Model="_app" OnValidSubmit="FrmSubmit">
+
+            <div class="row" style="margin:0 auto 3em auto; max-width:1000px">
+
+        <div class="col-md-5" >
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        Aplicacion
+                    </span>
+                </div>
+                <select id="ddmenu" @bind="CheckSelected" class="form-control">
+                    @foreach (var r in apps.OrderBy(a=>a.Value))
+                    {
+                        <option value="@r.Id"> @r.Value </option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-5" >
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        ROL 
+                    </span>
+                </div>
+                <select id="ddmenu" @bind="CheckSelectedRol" class="form-control">
+                    @foreach (var r in _app.Rols.OrderBy(a=>a.Name))
+                    {
+                        <option value="@r.Id"> @r.Name </option>
+                    }
+                </select>
+            </div>
+        </div>
+
+           <div class="col-md-2">
+           <button id="btnSave" type="submit" class="btn btn-primary">Guardar</button> 
+        </div>
+
+    </div>
+
+
+        <div class="row" style="padding:0 2em">
+
+            @foreach(var m in _app.Menus)
+            {
+
+                @if (m.Url == "#")
+                {
+                    <div class="col-md-3">
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="@m.Icon"></i>
+                                    @m.Name
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    @foreach (var o in m.Options)
+                                    {
+<li>
+<div class="form-group">
+<div class="custom-control custom-switch">
+    <InputCheckbox  id="@o.Id" type="checkbox" class="custom-control-input" 
+    @bind-Value="o.IsChecked" 
+    @onclick="e => { CheckboxClicked(o); }"
+    />
+    <label for="@o.Id" class="custom-control-label" style=" font-weight:normal " > @o.Name  </label>
+</div>
+</div>
+</li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+   
+                }
+                else
+                {
+
+                  <div class="col-md-3">
+                        <div class="card card-outline card-navy">
+                            <div class="card-header">
+<div class="custom-control custom-switch">
+<InputCheckbox  id="@m.Id" type="checkbox" class="custom-control-input" 
+    @bind-Value="m.IsChecked" 
+    @onclick="e => { CheckboxClickedMenu(m); }"
+    />
+<label for="@m.Id" class="custom-control-label" > @m.Name  <i style="margin-left:2em" class="@m.Icon"></i>    </label>
+</div>
+                            </div>
+                            
+                        </div>
+                    </div>  
+
+                }
+            }
+        </div>
+
+    </EditForm>
+
+    <br /><br />
+</section>
+
+@code {
+
+    void CheckboxClicked(EnterpriseApp.Shared.Entities.MenuOpton option)
+    {
+
+        option.IsChecked = !option.IsChecked;
+
+        option.Permissions.RemoveAll(a => a == selectedItemRol);
+
+        if (option.IsChecked)
+        {
+            option.Permissions.Add(selectedItemRol);
+        }
+    }
+
+    void CheckboxClickedMenu(EnterpriseApp.Shared.Entities.Menu option)
+    {
+
+        option.IsChecked = !option.IsChecked;
+
+        option.Permissions.RemoveAll(a => a == selectedItemRol);
+
+        if (option.IsChecked)
+        {
+            option.Permissions.Add(selectedItemRol);
+        }
+    }
+
+    private List<ListItem> apps = new List<ListItem>();
+    private string selectedItem { get; set; } = "";
+    private string selectedItemRol { get; set; } = "";
+
+    private string CheckSelected
+    {
+        get
+        {
+            return selectedItem;
+        }
+        set
+        {
+            ChangeEventArgs selectedEventArgs = new ChangeEventArgs();
+            selectedEventArgs.Value = value;
+            OnChangeSelected(selectedEventArgs);
+        }
+    }
+    private string CheckSelectedRol
+    {
+        get
+        {
+            return selectedItemRol;
+        }
+        set
+        {
+            ChangeEventArgs selectedEventArgs = new ChangeEventArgs();
+            selectedEventArgs.Value = value;
+            OnChangeSelectedRol(selectedEventArgs);
+        }
+    }
+
+    private async void OnChangeSelected(ChangeEventArgs e)
+    {
+        loading = true;
+        selectedItem = e.Value?.ToString() ?? "";
+        _app = await GetApplication(selectedItem);
+        loading = false;
+        StateHasChanged();
+    }
+    private void OnChangeSelectedRol(ChangeEventArgs e) {
+        selectedItemRol = e.Value?.ToString() ?? "";
+        SetPermissions(_app);
+        StateHasChanged();
+    }
+
+
+    IJSObjectReference module;
+
+    bool loading = true;
+    string Message = "";
+
+    private EnterpriseApp.Shared.Entities.App _app = new EnterpriseApp.Shared.Entities.App();
+
+
+    private IEnumerable<EnterpriseApp.Shared.Models.RolMenu> data = Enumerable.Empty<EnterpriseApp.Shared.Models.RolMenu>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+
+            module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/global.js?1");
+
+            apps = await http.GetFromJsonAsync<List<ListItem>>(
+                $"/api/App/Items", new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<ListItem>();
+
+            selectedItem = apps.FirstOrDefault()?.Id ?? "" ;
+
+            _app = await GetApplication(selectedItem);
+
+            selectedItemRol = _app.Rols.FirstOrDefault()?.Id ?? "";
+        }
+        catch (Exception ex)
+        {
+            Message = ex.Message;
+        }
+
+        loading = false;
+    }
+
+    private async void FrmSubmit()
+    {
+        loading = true;
+
+        try
+        {
+            var postResult = await http.PostAsJsonAsync("/api/App/SaveRol", _app);
+
+            var postContent = (await postResult.Content.ReadAsStringAsync());
+
+            if (postResult.IsSuccessStatusCode)
+            {
+                var app = JsonSerializer.Deserialize<EnterpriseApp.Shared.Entities.App>(postContent, 
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new EnterpriseApp.Shared.Entities.App();
+
+                 SetPermissions(app);
+
+                _app = app;
+
+                await module.InvokeAsync<bool>("showMsg", "success", "Guardado!");
+            }
+            else
+            {
+                await module.InvokeAsync<bool>("showMsg", "error", postContent);
+            }
+        }
+        catch (Exception ex) { 
+            Message = "E:" + ex.Message; 
+        }
+
+        loading = false;
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task<EnterpriseApp.Shared.Entities.App> GetApplication(string id)
+    {
+        var app = await http.GetFromJsonAsync<EnterpriseApp.Shared.Entities.App>(
+                $"/api/App/{id}", new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) 
+                ?? new EnterpriseApp.Shared.Entities.App();
+
+        if (selectedItemRol == "")
+        {
+            selectedItemRol = app.Rols.FirstOrDefault()?.Id ?? ""; 
+        }
+
+        SetPermissions(app);
+
+        return app;
+    }
+
+    private void SetPermissions(EnterpriseApp.Shared.Entities.App app)
+    {
+        foreach (var m in app.Menus)
+        {
+            m.Setchecked(selectedItemRol);
+            m.Options.ToList().ForEach(a => a.Setchecked(selectedItemRol));
+        }
+    }
+
+
+
+}

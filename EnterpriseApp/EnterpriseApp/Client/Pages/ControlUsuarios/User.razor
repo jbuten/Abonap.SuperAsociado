@@ -1,0 +1,628 @@
+﻿@page "/user"
+@using Abonap.Users
+
+@inject NavigationManager Navigation
+@inject IJSRuntime jsRuntime
+@inject HttpClient http
+@inject AppState appState 
+
+<RedirectToLogin CustomPage="users" />
+
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1> <i class="fa fa-user" /> Usuario </h1>
+            @Message
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/Users"> <i class="fa fa-reply" /> Back</a></li>
+              <li class="breadcrumb-item active">Administacion de usuario</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+                      <div class="col-md-3">
+            <div class="card card-primary card-outline">
+              <div class="card-body box-profile">
+                <div class="text-center">
+                    @if (loading)
+{<img class="profile-user-img img-fluid img-circle"
+                       src="/img//profile/user.png"
+                       alt="User profile picture">
+                            } else
+                            {
+                              <img class="profile-user-img img-fluid img-circle"
+                       src="@user.Photo"
+                       alt="User profile picture">  
+                            }
+                </div>
+
+                <h3 class="profile-username text-center">@user.DisplayName</h3>
+
+                <p class="text-muted text-center">@user.Title</p>
+
+
+                <ul class="list-group list-group-unbordered mb-3">
+                  <li class="list-group-item">
+                     <strong><i class="fas fa-book mr-1"></i> Departamento</strong>
+                     <p class="text-muted" style="margin:0 0 0 2em">@user.Department</p>
+                  </li>
+                  <li class="list-group-item">
+                    <strong><i class="fas fa-map-marker-alt mr-1"></i> Ubicacion</strong>
+                    <p class="text-muted" style="margin:0 0 0 2em">@user.PhysicalDeliveryOfficeName</p>
+                  </li>
+                  <li class="list-group-item" style="margin-bottom:0; padding-bottom:0; border-bottom:0">
+                    <strong><i class="fas fa-building mr-1"></i> Empresa</strong>
+                    <p class="text-muted" style="margin:0 0 0 2em">@user.Company</p>
+                  </li>
+@if (!user.Enabled)
+{
+<li class="list-group-item" style="margin-bottom:0; padding-bottom:0;border-bottom:0; color:red ">
+<strong><i class="fas fa-user-times mr-1"></i>Deshabilitado</strong>
+</li>        
+}
+                </ul>
+
+              </div>
+            </div>
+          </div>
+
+
+                    <div class="col-md-9">
+             <div class="card card-primary card-outline card-tabs">
+              <div class="card-header p-2" style="border-bottom:0">
+                <ul class="nav nav-tabs" role="tablist">
+                  <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Info General</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Perfiles aplicacion</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Solicitudes</a></li>
+                </ul>
+              </div>
+
+              <div class="card-body">
+                <div class="tab-content" >
+                  <div class="active tab-pane" id="activity">
+<div class="row">
+    <div class="col-md-8">
+
+                             <div class="row">
+                  <div class="col-4">
+<div class="form-group"><label>Nombres</label>
+<span class="form-control form-control-border">
+@user.GivenName
+</span>
+</div>
+                  </div>
+                  <div class="col-4">
+<div class="form-group"><label>Apellidos</label>
+<span class="form-control form-control-border">
+@user.Sn
+</span>
+</div>
+                  </div>
+                  <div class="col-4">
+<div class="form-group"><label>Codigo</label>
+<span class="form-control form-control-border">
+@user.PostOfficeBox
+</span>
+</div>
+                  </div>
+
+
+                </div>
+
+                                                     <div class="row">
+                  <div class="col-4">
+<div class="form-group"><label>Usuario</label>
+<span class="form-control form-control-border">
+@user.Username  @if (user.IsUserAD) { <span style="margin-left:1em" class="text-primary">  <i class="fa fa-globe"></i> </span> }
+</span>
+</div>
+                  </div>
+                  <div class="col-4">
+<div class="form-group"><label>Intranet</label>
+<span class="form-control form-control-border">
+@user.SAMAccountName
+</span>
+</div>
+                  </div>
+                  <div class="col-4">
+<div class="form-group"><label>Nickname</label>
+<span class="form-control form-control-border">
+@user.MailNickname
+</span>
+</div>
+
+                  </div>
+                </div>
+
+    </div>
+
+    <div class="col-md-4" style=" text-align: center; background-color: #f5f5f5;border-radius: 7px; " >
+        <label style="display:flex">Firma</label>
+
+        <div style="display:flex;border:1px solid #ccc; width:100%;max-height:80px " >
+            <img id="imgFirma" style="width:100%" src="./Firmas/Usuario/@user.Signature" alt="Firma">
+        </div>
+
+        <br />
+        <InputFile id="infile" OnChange="@OnFileSelection" />
+         <div style="align-self: flex-end;">
+              <button @onclick="Mfirma"  type="button" id="btnStart" class="btn btn-outline-primary btn-xs">
+                <i class="fas fa-edit"></i> Firmar
+            </button>
+            <button  type="button" id="btnGet" @onclick="getImage" class="btn btn-outline-primary btn-xs">
+                <i class="fas fa-image"></i> Imagen
+            </button>
+           
+        </div>
+
+    </div>
+
+</div>
+
+                   
+
+
+
+                                     <div class="row">
+                  <div class="col-4">
+<div class="form-group"><label><i class="fas fa-envelope mr-1"></i> Email</label>
+<span class="form-control form-control-border">
+@user.Mail
+</span>
+</div>
+                  </div>
+                  <div class="col-4">
+<div class="form-group"><label> Cedular</label>
+<span class="form-control form-control-border">
+@user.Mobile
+</span>
+</div>
+                  </div>
+                  <div class="col-4">
+<div class="form-group"><label>Centro Costo </label>
+<span class="form-control form-control-border">
+@user.PostalCode
+</span>
+</div>
+
+                  </div>
+                </div>
+
+<div class="row">
+<div class="col-4">
+<div class="form-group"><label>Supervisor</label>
+<span class="form-control form-control-border">
+@user.Manager
+</span>
+</div>
+</div>
+<div class="col-4">
+<div class="form-group"><label> <i class="fas fa-phone mr-1"></i> Teléfono / Ext.</label>
+<span class="form-control form-control-border">
+@user.TelephoneNumber
+</span>
+</div>
+</div>
+<div class="col-4">
+<div class="form-group"><label>Fecha creado</label>
+<span class="form-control form-control-border">
+@user.WhenCreated
+</span>
+</div>
+
+</div>
+</div>
+
+                  </div>
+
+                  <div class="tab-pane" id="timeline">
+                    
+ <div class="card-body table-responsive p-0">
+                <table id="tbroles" class="table table-striped table-valign-middle">
+                  <thead>
+                  <tr>
+                    <th>Aplicación / Módulos</th>
+                    <th>Perfil (ROL)</th>
+                    <th>Registrado por</th>
+                    <th>
+                        <button type="button" class="btn btn-outline-primary btn-sm" @onclick="(()=>OpenModal( new UserRol(), 0))">
+                          <i class="fas fa-plus"></i>
+                        </button>
+                    </th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                       @foreach (var item in user.Rols.Where(a=> a.Inactive == false )){
+                  <tr>
+                    <td>@item.AppName</td>
+                    <td>@item.RolName</td>
+                    <td>@item.AddBy</td>
+                    <td>
+                     <div class="btn-group">
+                        <button type="button" class="btn btn-outline-info btn-xs" @onclick="(()=>OpenModal(item, 1))">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-xs" @onclick="(()=>OpenModal(item, 2))">
+                          <i class="fas fa-ban"></i>
+                        </button>
+                        
+                      </div>
+                    </td>
+                  </tr>
+                  }
+                  </tbody>
+                </table>
+              </div>
+
+                  </div>
+
+
+                  <div class="tab-pane" id="settings">
+                 
+                      <div class="mailbox-controls">
+
+                <button type="button" class="btn btn-default btn-sm">
+                  <i class="fas fa-sync-alt"></i>
+                </button>
+                <div class="float-right">
+                  1-4/4
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-default btn-sm">
+                      <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm">
+                      <i class="fas fa-chevron-right"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="table-responsive mailbox-messages">
+                <table class="table table-hover table-striped">
+                  <tbody>
+
+
+                  <tr>
+                    <td>
+                      <div class="icheck-primary">
+                        <input type="checkbox" value="" id="check1">
+                        <label for="check1"></label>
+                      </div>
+                    </td>
+                    <td class="mailbox-star"><a href="#"><i class="fas fa-star-o text-warning"></i></a></td>
+                    <td class="mailbox-name"><a href="0" onclick="javascript:return false" >Acceso aplicación</a></td>
+                    <td class="mailbox-subject"><b>Control Usuarios</b> - Rol administrador</td>
+                    <td class="mailbox-attachment"><i class="fas fa-check"></i></td>
+                    <td class="mailbox-date">Completado</td>
+                  </tr>
+
+
+
+                  <tr>
+                    <td>
+                      <div class="icheck-primary">
+                        <input type="checkbox" value="" id="check2">
+                        <label for="check2"></label>
+                      </div>
+                    </td>
+                    <td class="mailbox-star"><a href="#"><i class="fas fa-star text-warning"></i></a></td>
+                    <td class="mailbox-name"><a href="0" onclick="javascript:return false" >Acceso aplicación</a></td>
+                    <td class="mailbox-subject"><b>Padrón de firmantes</b> Registrar firmas
+                    </td>
+                    <td class="mailbox-attachment"><i class="fas fa-server"></i></td>
+                    <td class="mailbox-date">En proceso</td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div class="icheck-primary">
+                        <input type="checkbox" value="" id="check2">
+                        <label for="check2"></label>
+                      </div>
+                    </td>
+                    <td class="mailbox-star"><a href="#"><i class="fas fa-star-o text-warning"></i></a></td>
+                    <td class="mailbox-name"><a href="0" onclick="javascript:return false" >Acceso aplicación</a></td>
+                    <td class="mailbox-subject"><b>Monitor de procesos</b> - Consultas
+                    </td>
+                    <td class="mailbox-attachment"><i class="fas fa-ban " style="color:red"></i></td>
+                    <td class="mailbox-date">Denegado</td>
+                  </tr>
+
+                   <tr>
+                    <td>
+                      <div class="icheck-primary">
+                        <input type="checkbox" value="" id="check2">
+                        <label for="check2"></label>
+                      </div>
+                    </td>
+                    <td class="mailbox-star"><a href="#"><i class="fas fa-star text-warning"></i></a></td>
+                    <td class="mailbox-name"><a href="0" onclick="javascript:return false" >Acceso aplicación</a></td>
+                    <td class="mailbox-subject"><b>Acuerdos de Pago</b> - Autorizacion de acuerdos
+                    </td>
+                    <td class="mailbox-attachment"><i class="fas fa-clock"></i></td>
+                    <td class="mailbox-date">Pendiente</td>
+                  </tr>
+
+                  </tbody>
+                </table>
+              </div>
+
+                  </div>
+
+
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    </div>
+
+</section>
+
+            <div class="modal fade @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+            <div id="dv-overlay">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalTitle"><i class="fa fa-key"></i>  Perfil de usuario</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CloseModal">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        <EditForm Model="rol" OnValidSubmit="FrmSubmit">
+                            <DataAnnotationsValidator />
+                        @if (action != 2)
+                        {
+                            <div class="modal-body">
+                            <div class="col-12">
+                                    <span style="font-size:12px" class="text-danger"><ValidationSummary /> @Message </span>
+                                </div>
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                            <div class="form-group">
+                                <label>Perfil de usuario</label>
+                                <select value="@rol.App" class="form-control" @onchange="@OnSelectApps" >
+                                <option value=""> -- seleccione -- </option>
+                                @foreach (var r in apps)
+                                {
+                                <option value="@r.Id"> @r.Name </option>
+                                }
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Perfil (ROL)</label>
+                                <InputSelect @bind-Value="rol.Rol" class="form-control" @onchange="@OnSelectRols" >
+                                <option value=""> -- seleccione -- </option>
+                                @foreach (var r in roles)
+                                {
+                                <option value="@r.Id"> @r.Value </option>
+                                }
+                                </InputSelect>
+                            </div>
+
+                            <div class="col-12">
+                                    <span style="font-size:12px" class="text-danger"><ValidationSummary /> @Message </span>
+                             </div>
+                            </div>
+
+                         <div class="modal-footer">
+                            <span class="d-flex flex-grow-1" style="float:left;font-size:xx-small" >
+                                    @rol.AddDate.ToString("dd-MM-yyyy hh:mm tt") *  
+                                    @rol.AddBy
+                                    </span>
+                            <button id="btnSave" type="submit" class="btn btn-primary">Guardar</button>
+                            <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cerrar</button>
+                        </div>
+                    }       
+                    else
+                    {
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Aplicacion</label>
+                                <span class="form-control"> @rol.AppName </span>
+                            </div>
+                            <div class="form-group">
+                                 <label>Perfil (ROL)</label>
+                                <span class="form-control"> @rol.RolName </span>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                           <button id="btnSave" type="submit" class="btn btn-danger">Eliminar</button>
+                           <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cerrar</button>
+                        </div>
+                    }
+
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<Cfirma @ref="Fmodal" TipoFirma="usuarios" RegId="@user.Username" Usuario="@appState.UserName">
+    <Title>
+        <label class="modal-title" id="modalTitle" style="margin-right:1em"><i class="fas fa-edit"></i> Firma del usuario</label>
+    </Title>
+</Cfirma>
+
+@code {
+
+    string usr = string.Empty;
+
+    bool loading = true; 
+    private Abonap.Users.User user = new Abonap.Users.User();
+    string Message = ""; IJSObjectReference module;
+    private List<ListApp> apps = new List<ListApp>();
+    private List<DataItem> roles = new List<DataItem>();
+    int action = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        usr = EnterpriseApp.Shared.Tools.GetParameterUri(Navigation.ToAbsoluteUri(Navigation.Uri).Query, "usr");
+
+        module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/profile.js?2");
+
+        try
+        {
+            apps = await http.GetFromJsonAsync<List<ListApp>>($"api/DataList/Apps")
+                   ?? new List<ListApp>();
+
+            user = await http.GetFromJsonAsync<Abonap.Users.User>($"api/User/{ usr }")
+                   ?? new Abonap.Users.User { Username = usr };
+
+        }
+        catch (Exception ex)
+        {
+            Message = "Profile OnInitializedAsync: " + ex.Message;
+        }
+        loading = false;
+    }
+
+    private string ModalDisplay = "", ModalClass = "";
+    UserRol rol = new UserRol();
+
+    public async Task OpenModal(UserRol reg, int _action)
+    {
+        action = _action;
+        rol = reg;
+        DropdownRoles();
+        rol = reg;
+
+        Console.WriteLine( JsonSerializer.Serialize(rol) );
+        ModalDisplay = "block;";
+        await Task.Delay(100);
+        ModalClass = "show";
+        StateHasChanged();
+    }
+
+    public async Task CloseModal()
+    {
+        ModalClass = "";
+        await Task.Delay(250);
+        ModalDisplay = "none;";
+    }
+
+    void OnSelectApps(ChangeEventArgs e)
+    {
+        rol.App = e.Value?.ToString() ?? "";
+        DropdownRoles();
+    }
+
+    private void OnSelectRols(ChangeEventArgs e)
+    {
+        rol.Rol = e.Value?.ToString() ?? "";
+    }
+
+    private void DropdownRoles()
+    {
+        if (rol.App == "") { roles = new List<DataItem>(); }
+        else { roles = apps.Where(a => a.Id == rol.App).First().Rols; }
+    }
+
+
+    private async void FrmSubmit()
+    {
+        await CloseModal();
+
+        try
+        {
+            SaveRol req = new SaveRol { UserName = user.Username, App = rol.App, Rol = rol.Rol, UpdateBy = appState.UserName };
+
+            var postResult = await http.PostAsJsonAsync((action!=2) ? "api/user/RolSave" : "api/user/RolDel", req);
+
+            var postContent = (await postResult.Content.ReadAsStringAsync());
+
+            if (postResult.IsSuccessStatusCode)
+            {
+                user.Rols = JsonSerializer.Deserialize< List<UserRol> >(postContent, 
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<UserRol>();
+                if (action != 2)
+                {
+                    await module.InvokeAsync<bool>("showMsg", "success", "Guardado!");
+                }
+                else
+                {
+                    await module.InvokeAsync<bool>("showMsg", "warning", "Eliminado!");
+                }
+            }
+            else
+            {
+                await module.InvokeAsync<bool>("showMsg", "error", postContent);
+            }
+        }
+        catch (Exception ex) { 
+            Message = "E:" + ex.Message; 
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    FileData fileData = new FileData();
+
+    private async Task OnFileSelection(InputFileChangeEventArgs e)
+    {
+        Message = "";
+
+        //visible = "block";
+
+        if (!EnterpriseApp.Shared.Tools.IsImage(e.File.Name))
+        {
+            Message = "Seleccione una imagen valida.  "; //visible = "none";
+
+            await module.InvokeAsync<bool>("showMsg", "error", "Seleccione una imagen valida.  ");
+
+            return;
+
+        }
+
+        string imageType = e.File.ContentType;
+        var resizedImage = await e.File.RequestImageFileAsync(imageType, 466, 248);
+        var buffers = new byte[resizedImage.Size];
+        await resizedImage.OpenReadStream().ReadAsync(buffers);
+
+        var res = await http.PostAsJsonAsync($"/api/User/Firma/{ appState.UserName }/{ user.Username }"  , 
+        Convert.ToBase64String(buffers));
+
+        var postContent = (await res.Content.ReadAsStringAsync()).Replace("\"","");
+
+        if (!res.IsSuccessStatusCode)
+        {
+            Message = postContent;
+            await module.InvokeAsync<bool>("showMsg", "error", "Error cargando la firma");
+        }
+        else
+        {
+            Message = "";
+            user.Signature = postContent;
+            await module.InvokeAsync<bool>("showMsg", "success", "Firma guardada.");
+        }
+
+        //visible = "none";
+        StateHasChanged();
+    }
+
+    private Cfirma Fmodal { get; set; } = new Cfirma();
+
+    private async Task Mfirma()
+    {
+        await Fmodal.Open();
+    }
+
+    public async Task getImage()
+    {
+        if (loading) { return; }
+        await module.InvokeAsync<bool>("getImage");
+    }
+
+}

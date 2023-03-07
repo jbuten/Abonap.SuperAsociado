@@ -1,0 +1,133 @@
+﻿@inject HttpClient http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<style>
+    .hmenu{
+       
+     font-weight:bold; width:100%; 
+     background-color:#f3f5fa;  
+     border-radius: 5px; 
+     border-right:1px solid #d9e4fa;
+     border-bottom:1px solid #d9e4fa;
+     height:40px;
+     padding-top:10px;
+     margin:5px 0 5px 0;text-align:center; 
+     font-weight:normal;
+     color:#000;
+    }
+    .hmenu  :hover {
+        color:#2F4D87; font-weight:bold; cursor:pointer
+    }
+</style>
+
+        <aside id="control_sidebar" class="main-sidebar sidebar-light-blue">
+            <a href="home" class="brand-link" style="background-color: #2F4D87;color: #fff; text-align:center ">
+        <img src="/img/Logo-ABONAP-Valores.png" alt="abonap logo" class="brand-image">
+            </a>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+               
+                <!-- Sidebar Menu -->
+                <nav class="mt-2">
+
+                    <br />
+                    
+                <ul class="nav__list nav nav-pills nav-sidebar flex-column;">
+
+@if (loading){
+   <li class="nav-item" style="color:darkblue; font-weight:bold">@Message<div class="app-spinner"></div><br /></li>
+}
+else {
+    @foreach (var a in _apps.Where(a=>!a.Inactive).OrderBy(o=>o.ShortName)) { 
+        <li class="hmenu nav-item" @onclick="(()=>NavigateMenu( a.Id ))"><span>@a.ShortName.ToUpper()</span></li>
+
+                        @if (a.Id == _idMenu)
+                        {
+
+                        @foreach (var m in a.Menus.OrderBy(a=>a.Index))
+                        {
+                            @if (m.Url != "#")
+                            {
+
+<li class="nav-item" style="width:100%;">
+    <a onclick="omenu()" href="@m.Url" class="nav-link">
+        <i class="@m.Icon"></i>
+        <p style="margin-left:1em"> @m.Name</p>
+    </a>
+</li>
+                            } 
+                            else {
+
+                    <li class="nav-item" style="width:100%;">
+
+                        <input id="@m.Id" type="checkbox" hidden />
+                        <label  for="@m.Id"> 
+                            <i class="@m.Icon"></i> 
+                            <i class="texto">@m.Name</i>
+                            <span class="fa fa-angle-right"></span> 
+                        </label>
+
+                        <ul class="group-list">
+
+                                        @foreach (var o in m.Options.OrderBy(a=>a.Index))
+                                        {
+<li class="nav-item" style="width:100%;">
+    <a onclick="omenu()" href="@o.Url" class="nav-link">
+        <i class="@o.Icon"></i> <p>@o.Name</p>
+    </a>
+</li>                                            
+                                        }
+                      
+                        </ul>
+                    </li>
+
+                            }
+                        }                            
+                        }
+                    }
+}
+                </ul>
+                <br /><br /><br />
+            </nav>
+                <!-- /.sidebar-menu -->
+            </div>
+            <!-- /.sidebar -->
+        </aside>
+@code {
+
+    bool loading = true;  string Message = " Cargando"; 
+    string _idMenu = "none";
+    private List<EnterpriseApp.Shared.Entities.App> _apps = new List<EnterpriseApp.Shared.Entities.App>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            try
+            {
+                http.DefaultRequestHeaders.Add("Accept", "application/json");
+                _apps = await http.GetFromJsonAsync<List<EnterpriseApp.Shared.Entities.App>>(
+                    $"/api/User/Apps/{user.Identity.Name}", new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ??
+                    new List<EnterpriseApp.Shared.Entities.App>();
+            }
+            catch (Exception ex)
+            {
+                Message = ex.Message;
+            }
+
+        }
+
+        loading = false;
+    }
+
+    private void NavigateMenu(string id)
+    {
+        _idMenu = id;
+    }
+
+
+}

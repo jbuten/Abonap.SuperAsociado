@@ -1,0 +1,19 @@
+﻿@page "/404"
+@inject IJSRuntime jsRuntime
+<div id="notfound">
+<div class="notfound">
+<div class="notfound-404">
+<h1>404</h1>
+</div>
+<h2>Oops, ¡la opción a la que intenta acceder no se encuentra!</h2>
+<button class="btn btn-outline-secondary" @onclick="NavigateBackClick"><span class="arrow"></span>Go Back Page</button>
+</div>
+</div>
+
+@code{
+ private async void NavigateBackClick()
+    {
+        await jsRuntime.InvokeVoidAsync("history.back");
+    }
+
+}

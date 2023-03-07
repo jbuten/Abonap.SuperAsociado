@@ -1,0 +1,309 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>GSID Delivery Tracking</title>
+    <base href="/" />
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    
+    <link href="manifest.json" rel="manifest" />
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.js"></script>
+    <!-- Mapbox Language -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-language/v1.0.0/mapbox-gl-language.js'></script>
+    <style>
+
+        .marker {
+            background-color: #000;
+            background-image: url('pausa.png');
+            background-size: cover;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .markerEntregaCamion {
+            background-color: #000;
+            background-image: url('camion-de-carga.png');
+            background-size: cover;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+
+        .markerEntregaCamionStop {
+            background-color: #000;
+            background-image: url('camion-de-reparto.png');
+            background-size: cover;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Style popup */
+        .mapboxgl-popup {
+            max-width: 200px;
+        }
+
+        .mapboxgl-popup-content {
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+        }
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+    <script>
+
+        window.MostrarRutasRoadNetAGL1 = function (id) {
+            //var urlRuteo = `https://localhost:7009/api/ruteo/${id}`;
+            var urlRuteo = "https://localhost:7124/api/DeliveryTracking/9ef7917b-ae99-4ff3-bd5c-7b57425a9edd";
+            var rutaPlanificadaRouner = [];
+            var rutaEntregaAGL = [];
+            var centrosRouner = "";
+            var aglStart = "";
+            var aglCoordenada = "";
+            var token = "pk.eyJ1IjoidGVzdGV1ZHlhcmlhcyIsImEiOiJjbDQ5NDJpaXgweWV6M2tyM2ZyN21pdnR2In0.bXsQmBTvg_3Ges-YY6rAsg";
+
+            mapboxgl.accessToken = token;
+            //Validar que el navegador soporte la version de mapbox
+
+            if (!mapboxgl.supported()) {
+                alert('Your browser does not support Mapbox GL');
+            } else {
+
+                    // Demo json consumir API
+                    fetch(urlRuteo)
+                        //fetch("f_1362Demo.json")
+                        .then(Response => Response.json())
+                        .then((data) => {
+                            data
+
+                            const map = new mapboxgl.Map({
+                                container: 'map',
+                                style: 'mapbox://styles/mapbox/streets-v11',
+                                center: [data.planificacion[0].lon/*-70.005100*/, data.planificacion[0].lat/*18.480560*/],
+                                zoom: 9
+                            });
+
+                            // Configurar idioma español
+                            mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js');
+                            map.addControl(new MapboxLanguage({
+                                defaultLanguage: 'es'
+                            }));
+
+                            //Cuando cargue el mapa
+                            map.on('load', () => {
+
+
+                            console.log(data);
+                            //data = data[4];
+                            console.log(data);
+                            if (data.planificacion.length > 0) {
+
+
+                                rutaPlanificadaRouner = [];
+                                rutaEntregaAGL = [];
+
+                                centrosRouner = data.coordenadasPlanificacion;
+
+                                //Agregar marcadores de la planificacion
+                                data.planificacion.forEach(element => {
+                                    rutaPlanificadaRouner.push([element.lon, element.lat]);
+
+                                    //crear elemento, donde dibujar el maker
+                                    var el = document.createElement('div');
+                                    el.className = 'marker';
+
+                                    //Crear marker
+                                    new mapboxgl.Marker(el)
+                                        //agregar cordenadas
+                                        .setLngLat([element.lon, element.lat])
+                                        //agregar popup
+                                        .setPopup(new mapboxgl.Popup({ offset: 25 })
+                                            .setHTML(`<h3>${element.orden} - ${element.cliente}</h3><p>descipcion</p>`)) // add popup
+                                        //agregar al mapa
+                                        .addTo(map);
+
+                                });
+
+                                //Configurar coordenadas de AGL
+                                data.trayectoria.forEach(element => {
+                                    rutaEntregaAGL.push([element.end.lng, element.end.lat]);
+                                    rutaEntregaAGL.push([element.start.lng, element.start.lat]);
+
+                                    if (element.type == "stop") {
+                                        aglCoordenada += `;${element.end.lng},${element.end.lat}`;
+                                    }
+                                    //aglCoordenada += `;${element.end.lng},${element.end.lat}`;
+
+                                    //crear elemento, donde dibujar el maker
+                                    var el = document.createElement('div');
+                                    el.className = 'markerEntregaCamion';
+
+                                    //Crear marker
+                                    new mapboxgl.Marker(el)
+                                        //agregar cordenadas
+                                        .setLngLat([element.start.lng, element.start.lat])
+                                        //agregar popup
+                                        .setPopup(new mapboxgl.Popup({ offset: 25 })
+                                            .setHTML(`<h3></h3><p>${element.start.lng} ${element.start.lat}</p>`)) // add popup
+                                        //agregar al mapa
+                                        .addTo(map);
+
+                                });
+                                aglCoordenada = aglCoordenada.substring(1);
+
+
+                                aglStart = data.coordenadasTrayectoria;
+
+                                console.log(aglStart);
+
+
+                                var getRoute = `${centrosRouner}`;
+                                //Construir ruta de rouner partiendo de las paradas planificadas
+                                fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${getRoute}?annotations=maxspeed&overview=full&geometries=geojson&access_token=${token}`)
+                                    .then(Response => Response.json())
+                                    .then(
+                                        (data) => {
+
+                                            console.warn(data);
+                                            console.warn(data.code);//code: "InvalidInput"
+                                            if (data.code == "InvalidInput") {
+                                                console.log("Error tratando de realizar la ruta de la planificacion");
+                                            } else {
+                                                var coordenadas = data.routes[0].geometry.coordinates;
+                                                console.log(coordenadas);
+                                                //Agrega un nuevo recurso llamado route
+                                                map.addSource('route', {
+                                                    'type': 'geojson',
+                                                    'data': {
+                                                        'type': 'Feature',
+                                                        'properties': {},
+                                                        'geometry': {
+                                                            'type': 'LineString',
+                                                            'coordinates': coordenadas,
+                                                        }
+                                                    }
+                                                });
+                                                //Agrega una capa para dibujar una linea
+                                                map.addLayer({
+                                                    'id': 'route',
+                                                    'type': 'line',
+                                                    'source': 'route',
+                                                    'layout': {
+                                                        'line-join': 'round',
+                                                        'line-cap': 'round'
+                                                    },
+                                                    'paint': {
+                                                        //'line-color': '#888',
+                                                        'line-color': '#000',
+                                                        'line-width': 8
+                                                    }
+                                                });
+
+                                                //Coordenadas entregas
+                                                var rutaEntregaCoordenadas = rutaEntregaAGL;
+                                                console.log("AGL");
+                                                console.log(rutaEntregaCoordenadas);
+                                            }
+
+
+                                            if (aglCoordenada != "") {
+
+
+                                                //Validar 25
+                                                var cantidad = 25;
+                                                if (aglCoordenada.split(";").length <= 25) {
+
+                                                    fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${aglCoordenada}?annotations=maxspeed&overview=full&geometries=geojson&access_token=${token}`)
+                                                        //fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${aglStart}?annotations=maxspeed&overview=full&geometries=geojson&access_token=${token}`)
+                                                        //fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/18.50042,-69.998;18.50042,-69.998;18.50042,-69.998;18.50042,-69.998;18.50702,-70.00275;18.5004,-69.99858;18.50702,-70.00275;18.50702,-70.00275;18.45052,-69.94659;18.5069,-70.00174;18.45052,-69.94659;18.45052,-69.94659?annotations=maxspeed&overview=full&geometries=geojson&access_token=${token}`)
+                                                        .then(Response => Response.json())
+                                                        .then(
+                                                            (data) => {
+
+                                                                console.log("AGL", data);
+                                                                var coordenadasAGL = data.routes[0].geometry.coordinates;
+                                                                console.log("Coordenadas AGL", coordenadasAGL);
+
+                                                                map.addSource('route1', {
+                                                                    'type': 'geojson',
+                                                                    'data': {
+                                                                        'type': 'Feature',
+                                                                        'properties': {},
+                                                                        'geometry': {
+                                                                            'type': 'LineString',
+                                                                            'coordinates': coordenadasAGL,
+                                                                        }
+                                                                    }
+                                                                });
+                                                                // dibuja la ruta del camion con las coordenadas de AGL
+                                                                map.addLayer({
+                                                                    'id': 'route1',
+                                                                    'type': 'line',
+                                                                    'source': 'route1',
+                                                                    'layout': {
+                                                                        'line-join': 'round',
+                                                                        'line-cap': 'round'
+                                                                    },
+                                                                    'paint': {
+                                                                        'line-color': '#ff0000',
+                                                                        'line-width': 3
+                                                                    }
+                                                                });
+                                                            });
+
+                                                } else {
+                                                    console.warn("mayor a 25 point");
+                                                }
+
+
+                                            } else {
+                                                console.log("No hay coordenada de AGL");
+                                            }
+
+
+
+
+
+
+                                        });//Fin Construir ruta de rouner partiendo de las paradas planificadas
+                            } else {
+                                console.warn("No hay planificacion");
+                            }
+
+
+
+                        }); //Load Mapbox
+
+
+                        });//Fin Demo json consumir API
+
+            }//fin else
+
+        }//fin funcion
+
+    </script>
+    <script>
+        window.onload = function () {
+            MostrarRutasRoadNetAGL1("");
+            //alert("ok");
+        };
+    </script>
+</head>
+
+<body>
+    <div id="map" style="color:red">Cargando vista...</div>
+</body>
+
+</html>

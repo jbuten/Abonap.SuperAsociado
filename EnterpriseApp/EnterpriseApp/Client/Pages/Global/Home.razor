@@ -1,0 +1,39 @@
+﻿@page "/home"
+
+
+<section class="content">
+    <br />
+    <div class="box">
+        <div style="margin:1em auto; width:90%;">
+            <img src="/img/dashboard.jpg" alt="promo">
+        </div>
+    </div>
+
+    <br /><br />
+</section>
+
+@inject HttpClient http
+
+@code {
+
+    bool loading = true;  string Message = ""; 
+    private List<EnterpriseApp.Shared.Entities.App> _apps = new List<EnterpriseApp.Shared.Entities.App>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _apps = await http.GetFromJsonAsync<List<EnterpriseApp.Shared.Entities.App>>($"/api/app", new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<EnterpriseApp.Shared.Entities.App>();
+        }
+        catch (Exception ex)
+        {
+            Message = ex.Message;
+        }
+
+        loading = false;
+
+        await base.OnParametersSetAsync();
+    }
+
+}

@@ -1,0 +1,194 @@
+﻿@page "/empleados"
+
+@inject HttpClient http
+@inject NavigationManager navigation
+@inject IJSRuntime jsRuntime
+
+<RedirectToLogin />
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1> <i class="fa fa-users" /> Colaboradores</h1>
+                <p style="margin:1em 2em" class="label-default">
+                    Lista general de colaboradores
+                </p>
+                @Message
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/empleados"> <i class="fa fa-reply" /> Back</a></li>
+                    <li class="breadcrumb-item active">Super Asociado</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="content">
+        <div class="row">
+
+            <div class="col-md-12" style="margin: 0 auto; max-width:1000px">
+                <div class="card card-info card-outline  ">
+
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <label for="inputEmail3" class="col-sm-1 col-form-label"  style="width: 100px; display:inline-flex">BUSCAR</label>
+                            <div class="col-sm-11">
+
+                                <div class="input-group input-group-sm" style="width: 300px; display:inline-flex">
+                                    <input id="inputSearch"
+                                           type="search" class="form-control float-right"  />
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-default" >
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <hr /> <br />
+                    <div class="table-responsive mailbox-messages">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr style="border-top:0">
+                                    <th style="border-top:0">Nombre colaborador</th>
+                                    <th style="border-top:0">Cedula</th>
+                                    <th style="border-top:0">Cargo</th>
+                                    <th style="border-top:0; text-align:right" align="right">Pre-Aprobado</th>
+                                    <th style="border-top:0"></th>
+                                    <th style="border-top:0">Estatus</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Reynoso Martinez</td>
+                                    <td>001-1234567-8</td>
+                                    <td>Generente de negocios</td>
+                                    <td align="right">450,000</td>
+                                    <td class="mailbox-attachment"><i class="fas fa-check"></i></td>
+                                    <td>
+                                        <a href="/empleado">Disponible</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Tejada, Rita</td>
+                                    <td>001-1234567-8</td>
+                                    <td>Agente de Compras Locales</td>
+                                    <td align="right">155,009</td>
+                                    <td class="mailbox-attachment"><i class="fas fa-check"></i></td>
+                                    <td>Disponible</td>
+                                </tr>
+                                <tr>
+                                    <td>De Oleo, Railis Anneris</td>
+                                    <td>001-1234567-8</td>
+                                    <td>Ejecutivo Jr. de Ventas</td>
+                                    <td align="right"> 355,000</td>
+                                    <td class="mailbox-attachment"><i class="fas fa-check"></i></td>
+                                    <td>Disponible</td>
+                                </tr>
+                                <tr>
+                                    <td>Carvajal, Jaimi</td>
+                                    <td>001-1234567-8</td>
+                                    <td>Asistente Adm. de Ventas</td>
+                                    <td align="right">0</td>
+                                    <td class="mailbox-attachment"><i class="fas fa-clock"></i></td>
+                                    <td>Pendiente</td>
+                                </tr>
+                                <tr>
+                                    <td>Gomez Moris</td>
+                                    <td>001-1234567-8</td>
+                                    <td>Encargado I de Almacen</td>
+                                    <td align="right">105,000</td>
+                                    <td class="mailbox-attachment"><i class="fas fa-check"></i></td>
+                                    <td>Disponible</td>
+                                </tr>
+                                <tr>
+                                    <td>Hernandez, Gina</td>
+                                    <td>001-1234567-8</td>
+                                    <td>Abogado</td>
+                                    <td align="right">205,000</td>
+                                    <td class="mailbox-attachment"><i class="fas fa-ban " style="color:red"></i></td>
+                                    <td>Denegado</td>
+                                </tr>
+                                <tr>
+                                    <td>Otano, Nelson</td>
+                                    <td>001-1234567-8</td>
+                                    <td>Gerente Centro Distribucion</td>
+                                    <td align="right">0</td>
+                                    <td class="mailbox-attachment"><i class="fas fa-clock"></i></td>
+                                    <td>Pendiente</td>
+                                </tr>
+                                <tr>
+                                    <td>Rosario, Ernesto</td>
+                                    <td>001-1234567-8</td>
+                                    <td>Encargado de Medioambiente</td>
+                                    <td align="right">225,000</td>
+                                    <td class="mailbox-attachment"><i class="fas fa-check"></i></td>
+                                    <td>Disponible</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <hr />
+
+                    <div class="mailbox-controls">
+
+                        <button type="button" class="btn btn-default btn-sm">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <div class="float-right">
+                            1-8/300
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default btn-sm">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button type="button" class="btn btn-default btn-sm">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    <br /><br />
+</section>
+
+@code {
+
+    bool loading = false;
+    string Message = "";
+
+    Model.Asociado Reg = new Model.Asociado { Rnc = "" };
+
+    private async void CheckChanged()
+    {
+        loading = true;
+        await Task.Delay(450);
+        Reg.Rnc = "101796822";
+        Reg.Nombre = "GRUPO RAMOS SA";
+        Reg.RazonSocial = "VENTA AL POR MENOR EN HIPERMER";
+        Reg.Fecha = "14/01/1999";
+        Reg.EstatusDGII = "ACTIVO";
+        loading = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void HandleSubmit()
+    {
+        loading = true;
+        await Task.Delay(450);
+        navigation.NavigateTo("asociado");
+    }
+
+}

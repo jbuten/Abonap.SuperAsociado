@@ -1,0 +1,65 @@
+﻿@inject NavigationManager Navigation
+@inject AppState appState
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    [Parameter]
+    public string? CustomPage { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await authenticationStateTask).User;
+
+        if (user.Identity is null || !user.Identity.IsAuthenticated)
+        {
+            Navigation.NavigateTo("/Login", true);
+        }
+        else
+        {
+            DateTime expiration = new DateTime( long.Parse( user.Claims.Where(c => c.Type == "expiration").FirstOrDefault().Value ));
+
+            //Console.WriteLine("{0}  ==  {1}", expiration.ToString(), DateTime.Now.ToString());
+
+            if (DateTime.Now > expiration)
+            {
+                Navigation.NavigateTo("/Login", true);
+                return;
+            }
+
+            appState.SetLogin(true, user.Identity.Name.ToString());
+
+            if (user.Identity.Name.ToString() == "jbuten") { return; }
+
+            //string _base = Navigation.BaseUri.ToString();
+            //string _url = Navigation.Uri.ToString().Replace(_base,string.Empty).ToLower();
+            //Console.WriteLine("Uri: {0}",_url);
+        }
+        try
+        {
+            string options = user.Claims.Where(c => c.Type == "Options").FirstOrDefault().Value;
+
+            var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
+
+            string opt = uri.AbsolutePath.Replace("/", "").ToLower();
+            //Console.WriteLine(Navigation.Uri);
+            //Console.WriteLine(options); 
+            //Console.WriteLine(opt);
+
+            if (opt != "home")
+            {
+                if (!string.IsNullOrEmpty(CustomPage)) { opt = CustomPage; }
+
+                var opts = options.Split('|');
+
+                if (!opts.Contains(opt))
+                {
+                    Navigation.NavigateTo("/Uc", true);
+                    //Console.WriteLine("No tiene permisos a la opcion: {0}", opt.ToUpper());
+                }
+            }
+        }
+        catch (Exception ex) { Console.WriteLine(ex.Message); }
+
+    }
+}

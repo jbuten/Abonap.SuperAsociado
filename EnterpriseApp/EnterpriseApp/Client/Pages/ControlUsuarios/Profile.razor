@@ -1,0 +1,411 @@
+﻿@page "/profile"
+@inject IJSRuntime jsRuntime
+@inject HttpClient http
+@inject AppState appState 
+@inject NavigationManager Navigation
+
+<section class="content">
+    
+    <EditForm Model="reg" OnValidSubmit="FrmSubmit">
+        <DataAnnotationsValidator />
+
+        <div id="dvedit" class="row">
+            <div class="col-md-12" style="max-width:900px; margin:3em auto 1em auto">
+
+                <span style="font-size:12px" class="text-danger"><ValidationSummary /> @Message </span>
+
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-user"></i>
+                            MI PERFIL DE USUARIO
+                        </h3>
+                        <div id="dvtools" class="card-tools">
+
+                            @if (loading)
+                            {
+                                <button class="btn btn-outline-danger" type="button" style="margin-right:1em" disabled>
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    Cargando ...
+                                </button>
+                            }
+
+                        <div class="btn-group">
+
+                            <button style="display:@noCamara" @onclick="getImage" type="button" id="btnGet" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-image"></i> Imagen
+                            </button>
+                            <button style="display:@noCamara" @onclick="startMedia" type="button" id="btnStart" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-camera"></i> Camara
+                            </button>
+                            <button style="display:@isCamara" @onclick="captureImage" type="button" id="capture-btn2" class="btn btn-primary btn-sm">
+                                <i class="fas fa-camera-retro"></i> Capturar
+                            </button>
+                            <button style="display:@isCamara" @onclick="stopMedia" type="button" id="btnStop2" class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-stop"></i> Stop
+                            </button>
+                            
+                        </div>
+
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            
+
+                            <div class="col-md-4">
+                                
+                                <div class="form-group">
+                                    <span>Nombres</span>
+                                    <span class="form-control">@reg.GivenName</span>
+                                </div>
+                                <div class="form-group">
+                                    <span>Apellidos</span>
+                                    <span class="form-control">@reg.Sn</span>
+                                </div>
+                                <div class="form-group">
+                                    <span>Email</span>
+                                    <span class="form-control">@reg.Mail</span>
+                                </div>
+                                <div class="form-group">
+                                    <span>Mobile Phone / Extencion</span>
+                                    <span class="form-control">@reg.Mobile - @reg.PostOfficeBox </span>
+                                </div>
+                            </div>
+
+                             <div class="col-md-4">
+                                 <div class="form-group">
+                                    <span>Nombre Usuario</span>
+                                    <span class="form-control">@reg.MailNickname</span>
+                                </div>
+                                <div class="form-group">
+                                    <span>Usuario Dominio</span>
+                                    <span class="form-control">@reg.SAMAccountName</span>
+                                </div>
+                               
+                                <div class="form-group">
+                                    <span>Ubicacion</span>
+                                    <span class="form-control">@reg.PhysicalDeliveryOfficeName </span>
+                                </div>
+                                <div class="form-group">
+                                    <span>Compania</span>
+                                    <span class="form-control">@reg.Company </span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <InputFile id="infile" OnChange="@OnFileSelection" />
+                                <br />
+                                <div class="row">
+                                    <div id="dvfoto" class="text-center">
+                                        <video id="player" class="profileUserImg" autoplay></video>
+                                        <canvas id="canvas" class="profileUserImg"></canvas>
+                                        <img @onclick="getImage" id="foto" class="profileUserImg" asp-append-version="true" src="/img/profile/@reg.PhotoPath" alt="User profile picture">
+                                    </div>
+                                    <br />
+
+                                </div>
+                                <span style="display:block; margin-top:2em" class="text-sm-center"> @reg.DisplayName </span>
+                                <span style="display:block; margin-top:2px" class="text-sm-center"> @reg.Title </span>
+                                <span style="display:block; margin-top:2px" class="text-sm-center"> @reg.Department </span>
+                                
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12" style="max-width:900px; margin:0em auto 1em auto">
+
+                <!-- /.card -->
+
+            <div class="card card-info card-outline">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-key"></i> LISTA DE ACCESOS</h3>
+                <div class="card-tools">
+                     <button style="margin-right:1em;" type="submit" class="btn btn-outline-info btn-sm">
+                                 Solicitar Acceso
+                            </button>
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                   <button type="button" class="btn btn-tool" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body table-responsive p-0">
+                <table class="table table-striped table-valign-middle">
+                  <thead>
+                  <tr>
+                    <th>Aplicación / Módulos</th>
+                    <th>Perfil (ROL)</th>
+                    <th>Fecha registro</th>
+                    <th>Otorgado por</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+ @foreach (var item in reg.Rols.Where(a=> a.Inactive == false )){
+                  <tr>
+                    <td>
+                         <img src="/img/default-150x150.png" alt="Product 1" class="img-circle img-size-32 mr-2">
+                        @item.AppName</td>
+                    <td>@item.RolName</td>
+                    <td>@item.AddBy</td>
+                                        <td>@item.AddDate</td>
+                  </tr>
+                  }
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- /.card -->
+
+            </div>
+        </div>
+
+    </EditForm>
+
+    <br /><br />
+</section>
+
+
+@code{
+    
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    bool loading = true; 
+    string Message = "";
+    Abonap.Users.User reg = new Abonap.Users.User { GivenName = "Jose Manuel", Cn = "Buten Peralta",
+        Username = "NOTauthenticated", Name = "", Mail = "", Mobile = "", SAMAccountName = "none", Photo = "photo.png" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/profile.js?2");
+
+        var user = (await authenticationStateTask).User;
+
+        if (user.Identity is null || !user.Identity.IsAuthenticated)
+        {
+            Navigation.NavigateTo("/Login", true);
+        }
+        else
+        {
+            DateTime expiration = new DateTime( long.Parse( user.Claims.Where(c => c.Type == "expiration").FirstOrDefault().Value ));
+            
+            if (DateTime.Now > expiration)
+            {
+                Navigation.NavigateTo("/Login", true);
+                return;
+            }
+
+            appState.SetLogin(true, user.Identity.Name.ToString());
+
+        }
+
+        try {
+
+            reg = await http.GetFromJsonAsync<Abonap.Users.User>($"api/User/{ appState.UserName }") 
+                                           ?? new Abonap.Users.User() ;
+
+        } catch (Exception ex) {
+            Message = "Profile OnInitializedAsync: " + ex.Message;
+        }
+
+        loading = false;
+    }
+
+    private async void FrmSubmit()
+    {
+        Message = "";
+        loading = true;
+
+        try
+        {
+            var response = await http.PostAsJsonAsync("api/AcuerdoPago", reg);
+            string data = await response.Content.ReadAsStringAsync();
+            ApiResponse<bool> res = 
+            JsonSerializer.Deserialize<ApiResponse<bool>>(data, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) 
+                                       ?? new ApiResponse<bool> { Data = false, IsSuccess = false };
+
+            if (res.IsSuccess)
+            {
+                await module.InvokeAsync<bool>("showMsg", "success", "Datos guardados satisfactoriamente.");
+            }
+            else
+            {
+                await module.InvokeAsync<bool>("showMsg", "error", "Error guardando la informacion del usuario");
+                Message = res.Message;
+
+            }
+        }
+        catch (Exception ex) { Message = ex.Message; }
+        loading = false;
+        StateHasChanged();
+    }
+
+
+
+    #region CAMARA
+
+    //private string visible = "none";
+
+    FileData fileData = new FileData();
+
+    private async Task OnFileSelection(InputFileChangeEventArgs e)
+    {
+        Message = "";
+
+        //visible = "block";
+
+        if (!EnterpriseApp.Shared.Tools.IsImage(e.File.Name))
+        {
+            Message = "Seleccione una imagen valida.  "; //visible = "none";
+
+            await module.InvokeAsync<bool>("showMsg", "error", "Seleccione una imagen valida.  ");
+
+            return;
+
+        }
+
+        string imageType = e.File.ContentType;
+        var resizedImage = await e.File.RequestImageFileAsync(imageType, 500, 500);
+        var buffers = new byte[resizedImage.Size];
+        await resizedImage.OpenReadStream().ReadAsync(buffers);
+
+        var res = await UpImageProfile(new FileData
+        {
+            Data = buffers,
+            FileName = e.File.Name,
+            UserName = reg.Username
+        });
+
+
+        if (!res.IsSuccess)
+        {
+            Message = res.Message;
+            await module.InvokeAsync<bool>("showMsg", "error", "Error asignando la foto del usuario");
+        }
+        else
+        {
+
+            Message = "";
+
+            string fileExtenstion = System.IO.Path.GetExtension(e.File.Name).ToLower() + "?" + DateTime.Now.Ticks;
+
+            reg.PhotoPath = reg.Username + fileExtenstion + "?" + DateTime.Now.Ticks.ToString();
+            await module.InvokeAsync<bool>("setImage", "/img/profile/" + reg.PhotoPath  );
+        }
+
+        //visible = "none";
+        StateHasChanged();
+    }
+
+        public async Task<ApiResponse<string>> UpImageProfile(FileData fd)
+        {
+            ApiResponse<string> res = new ApiResponse<string> { IsSuccess = false, Message = "", Exception = "", Data = null };
+
+            //Console.WriteLine(System.Text.Json.JsonSerializer.Serialize( fd) );
+
+            try
+            {
+                var postResult = await http.PostAsJsonAsync("/api/User/UpImg", fd);
+                res.IsSuccess = postResult.IsSuccessStatusCode;
+
+                var postContent = (await postResult.Content.ReadAsStringAsync()).Replace("\"","");
+      
+                if (!postResult.IsSuccessStatusCode)
+                {
+                    res.Message = postContent;
+                    res.Data = "";
+                }
+                else
+                {
+                    res.IsSuccess = true;
+                    res.Message = "";
+                    res.Data = postContent;
+                }
+
+            }
+            catch (Exception ex) { res.Message = ex.Message; }
+            return res;
+
+        }
+
+
+    private bool camara { get; set; } = false;
+
+    public string noCamara
+    {
+        get
+        {
+            string res = "none";
+
+            if (loading) { res = "none"; }
+            else if (camara) { res = "none"; }
+            else { res = "block"; }
+
+            return res;
+        }
+    }
+
+    public string isCamara
+    {
+        get
+        {
+            string res = "none";
+
+            if (loading) { res = "none"; }
+            else if (camara) { res = "block"; }
+            else { res = "none"; }
+
+            return res;
+        }
+    }
+
+
+    IJSObjectReference module;
+
+    public async Task startMedia()
+    {
+        if (camara) { return; }
+
+        await module.InvokeAsync<string>("startMedia");
+
+        camara = true;
+    }
+
+    public async Task stopMedia()
+    {
+        camara = false;
+        await module.InvokeAsync<string>("stopMedia");
+        StateHasChanged();
+    }
+
+    public async Task captureImage()
+    {
+        await module.InvokeAsync<string>("captureImage", reg.Username);
+        camara = !camara;
+    }
+
+    public async Task getImage()
+    {
+        if ((loading) || (camara)) { return; }
+        await module.InvokeAsync<bool>("getImage");
+    }
+
+    #endregion
+
+
+
+}
